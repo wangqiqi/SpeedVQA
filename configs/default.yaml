@@ -1,0 +1,168 @@
+# SpeedVQA默认配置文件
+# 完全可配置的YAML驱动系统，无硬编码参数
+
+model:
+  name: 'speedvqa'
+  
+  # 视觉编码器配置
+  vision:
+    backbone: 'mobilenet_v3_small'  # mobilenet_v3_small, mobilenet_v3_large, resnet50
+    pretrained: true
+    feature_dim: 1024
+    dropout: 0.1
+  
+  # 文本编码器配置
+  text:
+    encoder: 'distilbert-base-uncased'  # distilbert-base-uncased, bert-base-uncased
+    max_length: 128
+    feature_dim: 768
+    freeze_encoder: false  # 是否冻结文本编码器
+  
+  # 融合层配置
+  fusion:
+    method: 'concat'  # concat, attention, bilinear
+    hidden_dim: 1792  # vision_dim + text_dim
+    dropout: 0.3
+    use_layer_norm: true
+  
+  # 分类器配置
+  classifier:
+    hidden_dims: [512, 256]  # 多层MLP
+    num_classes: 2
+    dropout: 0.2
+    activation: 'relu'  # relu, gelu, swish
+  
+  # 损失函数配置
+  loss:
+    type: 'cross_entropy'  # cross_entropy, focal_loss
+    weight: null  # 类别权重，null表示自动计算
+    label_smoothing: 0.0
+
+data:
+  # 数据路径配置
+  dataset_path: './datasets/vqa_dataset'
+  cache_dir: './cache'
+  
+  # 图像预处理配置
+  image:
+    size: [224, 224]  # [height, width]
+    mean: [0.485, 0.456, 0.406]  # ImageNet标准化
+    std: [0.229, 0.224, 0.225]
+    interpolation: 'bilinear'
+  
+  # 数据增强配置
+  augmentation:
+    enabled: true
+    random_crop: true
+    random_flip: true
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+      hue: 0.1
+    random_rotation: 10  # 度数
+  
+  # 数据加载配置
+  dataloader:
+    batch_size: 32
+    num_workers: 4
+    pin_memory: true
+    drop_last: true
+    shuffle: true
+  
+  # 数据集划分配置
+  split:
+    train_ratio: 0.7
+    val_ratio: 0.2
+    test_ratio: 0.1
+    random_seed: 42
+  
+  # 答案标准化配置
+  answer_mapping:
+    positive: ['是', 'yes', 'y', '有', '存在', '正确', '对', 'true', '1']
+    negative: ['否', 'no', 'n', '不是', '没有', '不存在', '错误', '不对', 'false', '0']
+    default: 'NO'
+
+train:
+  # 训练基本配置
+  epochs: 100
+  resume: null  # 恢复训练的checkpoint路径
+  save_dir: './runs/train'
+  experiment_name: 'speedvqa_exp1'
+  
+  # 优化器配置
+  optimizer:
+    type: 'adamw'  # adamw, adam, sgd
+    lr: 0.001
+    weight_decay: 0.0005
+    betas: [0.9, 0.999]
+    eps: 1e-8
+  
+  # 学习率调度器配置
+  scheduler:
+    type: 'cosine'  # cosine, step, plateau
+    warmup_epochs: 5
+    warmup_lr: 1e-6
+    min_lr: 1e-6
+  
+  # 训练策略配置
+  strategy:
+    mixed_precision: true  # 混合精度训练
+    gradient_accumulation_steps: 1
+    max_grad_norm: 1.0  # 梯度裁剪
+    early_stopping:
+      enabled: true
+      patience: 15
+      min_delta: 0.001
+  
+  # 验证配置
+  validation:
+    interval: 1  # 每N个epoch验证一次
+    save_best: true
+    metric: 'accuracy'  # accuracy, f1, auc
+  
+  # 日志配置
+  logging:
+    log_interval: 100  # 每N个batch打印一次
+    save_checkpoint_interval: 10  # 每N个epoch保存一次checkpoint
+    tensorboard: true
+    wandb:
+      enabled: false
+      project: 'speedvqa'
+      entity: null
+
+val:
+  # 验证配置
+  batch_size: 64
+  num_workers: 4
+  save_predictions: true
+  save_dir: './runs/val'
+
+inference:
+  # 推理基本配置
+  device: 'cuda'  # cuda, cpu, auto
+  batch_size: 16
+  num_workers: 2
+  
+  # 性能配置
+  performance:
+    max_inference_time_ms: 50.0
+    warmup_iterations: 10
+    benchmark_iterations: 100
+  
+  # 后处理配置
+  postprocess:
+    confidence_threshold: 0.5
+    apply_softmax: true
+    return_probabilities: true
+
+# 硬件特定配置
+hardware:
+  # GPU配置
+  gpu:
+    device_ids: [0]  # 使用的GPU ID列表
+    memory_fraction: 0.9  # GPU内存使用比例
+  
+  # CPU配置
+  cpu:
+    num_threads: 8
