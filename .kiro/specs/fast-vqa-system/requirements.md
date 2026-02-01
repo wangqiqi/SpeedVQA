@@ -2,15 +2,16 @@
 
 ## 介绍
 
-基于目标检测的极速视觉问答系统是一个创新的垂直行业AI解决方案，通过VQA技术替代传统多类别检测方法。系统采用**分层扩展架构**：基础检测层（外部训练）→ VQA问答层（核心开发）→ 属性识别层（扩展）→ 向量搜索层（高级），专门针对T4显卡优化，实现毫秒级响应。
+SpeedVQA是一个完整的极速视觉问答系统解决方案，专注于YES/NO问答任务，提供从数据准备到生产部署的全生命周期支持。系统采用**模块化全栈架构**：数据准备→模型训练→模型导出→灵活部署→在线学习，专门针对T4显卡优化，实现毫秒级响应。
 
-**架构分层设计：**
-- **L1 基础检测层**：人员/车辆/动物/物体检测（外部已有，预留接口）
-- **L2 VQA问答层**：核心开发重点，处理复杂行为问答
-- **L3 属性识别层**：人体属性、车辆属性等细粒度特征（扩展功能）
-- **L4 向量搜索层**：以图搜图、语义搜索等高级应用（未来规划）
+**系统核心特性：**
+- **独立训练**：支持单独的数据准备、模型训练和验证
+- **多格式导出**：支持PyTorch(.pt)、ONNX(.onnx)、TensorRT(.engine)格式
+- **灵活部署**：支持ROI测试、全图+检测链路、自定义解决方案
+- **在线学习**：用户反馈驱动的持续学习和模型优化
+- **全栈支持**：包含前后端管理、标注工具、部署服务
 
-相比传统方法需要为每个行为准备大量样本，本方案通过问答对的方式大幅降低数据标注成本，快速适应垂直行业需求。
+相比传统VQA方案，SpeedVQA专门为垂直行业优化，通过问答对方式大幅降低标注成本，快速适应业务需求。
 
 ## 创新方案对比
 
@@ -43,86 +44,68 @@ graph TD
     style I2 fill:#e3f2fd
 ```
 
-## 分层扩展架构设计
+## SpeedVQA全栈系统架构
 
 ```mermaid
 graph TD
-    A[输入图像] --> B[L1: 基础检测层]
-    
-    subgraph "L1: 基础检测层 (外部训练模型)"
-        B --> C[人员检测接口]
-        B --> D[车辆检测接口]
-        B --> E[动物检测接口]
-        B --> F[物体检测接口]
+    subgraph "数据准备层"
+        A[原始图像] --> B[数据标注工具]
+        B --> C[问答对数据集]
+        C --> D[数据验证与清洗]
+        D --> E[训练/验证/测试划分]
     end
     
-    C --> G[ROI提取与智能合并]
-    D --> G
-    E --> G
-    F --> G
+    subgraph "模型训练层"
+        E --> F[SpeedVQA模型训练]
+        F --> G[模型验证与调优]
+        G --> H[性能评估]
+        H --> I{是否满足要求}
+        I -->|否| F
+        I -->|是| J[模型导出]
+    end
     
-    subgraph "L2: VQA问答层 (核心开发)"
-        G --> H[ROI数据库]
-        I[垂直行业问题] --> J[问题复杂度分析]
-        J --> K{选择模型架构}
-        K -->|简单问题| L[二分类模型]
-        K -->|复杂问题| M[多分类共享模型]
-        K -->|分组问题| N[按类型分组模型]
+    subgraph "模型导出层"
+        J --> K["PyTorch模型 (.pt)"]
+        J --> L["ONNX模型 (.onnx)"]
+        J --> M["TensorRT引擎 (.engine)"]
+    end
+    
+    subgraph "推理验证层"
+        K --> N[ROI推理验证]
+        L --> O[ONNX推理验证]
+        M --> P[TensorRT推理验证]
         
-        H --> O[MobileNetV3特征提取]
-        I --> P[问题文本编码]
-        O --> Q[多模态融合]
+        N --> Q[推理结果分析]
+        O --> Q
         P --> Q
-        Q --> L
-        Q --> M
-        Q --> N
-        
-        L --> R[YES/NO + 置信度 + 关键区域]
-        M --> R
-        N --> R
     end
     
-    subgraph "L3: 属性识别层 (扩展功能)"
-        O --> S[人体属性识别]
-        O --> T[车辆属性识别]
-        O --> U[物体属性识别]
-        S --> V[属性特征向量]
-        T --> V
-        U --> V
+    subgraph "扩展接口层 (预留)"
+        Q --> R[检测模型接口]
+        Q --> S[部署服务接口]
+        Q --> T[前端管理接口]
     end
     
-    subgraph "L4: 向量搜索层 (未来规划)"
-        V --> W[特征向量数据库]
-        W --> X[以图搜图]
-        W --> Y[语义搜索]
-        W --> Z[相似度检索]
-    end
-    
-    subgraph "优先级与扩展路径"
-        AA[Phase 1: L2 VQA核心] --> BB[Phase 2: L3 属性识别]
-        BB --> CC[Phase 3: L4 向量搜索]
-        DD[L1接口预留] --> AA
-    end
-    
-    style C fill:#f0f0f0
-    style D fill:#f0f0f0
-    style E fill:#f0f0f0
-    style F fill:#f0f0f0
-    style R fill:#e8f5e8
-    style V fill:#e1f5fe
-    style W fill:#fff3e0
-    style AA fill:#fce4ec
+    style F fill:#e8f5e8
+    style J fill:#e1f5fe
+    style Q fill:#fff3e0
+    style R fill:#f0f0f0
+    style S fill:#f0f0f0
+    style T fill:#f0f0f0
 ```
 
 ## 术语表
 
 - **VQA_System**: 视觉问答系统主体
-- **Detection_Interface**: 基础检测模型接口（外部训练模型的标准接口）
-- **Attribute_Recognizer**: 属性识别器（人体/车辆/物体属性）
-- **Feature_Vectorizer**: 特征向量化模块
-- **Vector_Database**: 向量数据库（支持相似度检索）
-- **Image_Searcher**: 以图搜图模块
-- **Semantic_Searcher**: 语义搜索模块
+- **SpeedVQA_Trainer**: 模型训练器（支持独立训练和验证）
+- **Model_Exporter**: 模型导出器（支持.pt/.onnx/.engine格式）
+- **Deployment_Manager**: 部署管理器（支持多种部署方案）
+- **ROI_Tester**: ROI测试模式（直接输入ROI图像测试）
+- **Detection_Pipeline**: 全图检测链路（对接外部检测模型）
+- **Custom_Solution**: 自定义解决方案（客户定制部署）
+- **ROI_Inferencer**: ROI推理器（对ROI图像进行问答推理）
+- **Performance_Monitor**: 性能监控器（推理时间、准确率统计）
+- **Result_Visualizer**: 结果可视化器（推理结果展示）
 - **Online_Annotator**: 客户现场在线标注工具
 - **Online_Learner**: 客户现场在线学习模块
 - **ROI_Merger**: ROI区域合并模块（处理群体目标）
@@ -137,52 +120,126 @@ graph TD
 
 ## 需求
 
-### 需求 1: 基础检测接口设计
+### 需求 1: 独立数据准备与标注
 
-**用户故事:** 作为算法工程师，我希望系统提供标准化的基础检测接口，能够无缝对接外部训练的检测模型，专注于VQA核心能力开发。
+**用户故事:** 作为数据工程师，我希望系统提供完整的数据准备工具链，支持高效的问答对标注和数据质量管理。
 
-```python
-# Detection_Interface 标准返回格式
-detection_result = {
-    "bbox": [x_min, y_min, width, height],  # ROI边界框
-    "confidence": 0.95,                     # 检测置信度
-    "category": "person",                   # 目标类别
-    "roi_features": np.array([...]) or None # 可选：检测模型的ROI特征向量
-}
+#### 验收标准
 
-# 两种特征获取策略：
-# 策略1：复用检测特征（推荐，性能更好）
-if detection_result["roi_features"] is not None:
-    vqa_features = detection_result["roi_features"]
+1. WHEN 原始图像输入 THEN Data_Annotator SHALL 提供直观的ROI标注界面
+2. WHEN ROI标注完成 THEN Data_Annotator SHALL 支持问答对快速标注
+3. WHEN 标注数据生成 THEN Data_Validator SHALL 自动检测标注质量和一致性
+4. WHEN 数据集划分 THEN Data_Splitter SHALL 按7:2:1比例划分训练/验证/测试集
+5. WHEN 数据导出 THEN Data_Exporter SHALL 生成标准格式的训练数据
+
+### 需求 2: 独立模型训练系统
+
+**用户故事:** 作为算法工程师，我希望能够独立训练SpeedVQA模型，支持超参数调优和性能监控。
+
+#### 验收标准
+
+1. WHEN 训练数据准备完成 THEN SpeedVQA_Trainer SHALL 支持独立模型训练
+2. WHEN 训练过程执行 THEN SpeedVQA_Trainer SHALL 提供实时训练监控和日志
+3. WHEN 验证阶段 THEN SpeedVQA_Trainer SHALL 自动评估模型性能指标
+4. WHEN 训练完成 THEN SpeedVQA_Trainer SHALL 生成详细的训练报告
+5. WHEN 超参数调优 THEN SpeedVQA_Trainer SHALL 支持网格搜索和贝叶斯优化
+
+### 需求 3: 多格式模型导出
+
+**用户故事:** 作为部署工程师，我希望系统支持多种模型格式导出，满足不同部署环境的需求。
+
+#### 验收标准
+
+1. WHEN 模型训练完成 THEN Model_Exporter SHALL 支持PyTorch(.pt)格式导出
+2. WHEN ONNX导出需要 THEN Model_Exporter SHALL 支持ONNX(.onnx)格式导出
+3. WHEN TensorRT优化需要 THEN Model_Exporter SHALL 支持TensorRT(.engine)格式导出
+4. WHEN 模型导出 THEN Model_Exporter SHALL 验证导出模型的功能一致性
+5. WHEN 性能测试 THEN Model_Exporter SHALL 提供各格式的性能基准测试
+
+### 需求 4: 灵活部署方案
+
+**用户故事:** 作为系统集成商，我希望系统提供多种部署方案，适应不同的业务场景和技术栈。
+
+```mermaid
+flowchart TD
+    A[SpeedVQA模型] --> B{部署方案选择}
     
-# 策略2：VQA层重新提取（兼容性更好）  
-else:
-    roi_image = crop_roi(image, detection_result["bbox"])
-    vqa_features = vqa_feature_extractor(roi_image)
+    B -->|方案1| C[ROI测试模式]
+    B -->|方案2| D[全图+检测链路]
+    B -->|方案3| E[自定义解决方案]
+    
+    C --> F[直接ROI输入]
+    F --> G[VQA推理]
+    G --> H[结果输出]
+    
+    D --> I[全图输入]
+    I --> J[外部检测模型]
+    J --> K[ROI提取]
+    K --> G
+    
+    E --> L[客户定制接口]
+    L --> M[业务逻辑集成]
+    M --> G
+    
+    style C fill:#e1f5fe
+    style D fill:#e8f5e8
+    style E fill:#fff3e0
 ```
 
 #### 验收标准
 
-1. WHEN 外部人员检测模型接入 THEN Detection_Interface SHALL 提供标准化的人员检测接口
-2. WHEN 外部车辆检测模型接入 THEN Detection_Interface SHALL 提供标准化的车辆检测接口
-3. WHEN 外部动物检测模型接入 THEN Detection_Interface SHALL 提供标准化的动物检测接口
-4. WHEN 外部物体检测模型接入 THEN Detection_Interface SHALL 提供标准化的物体检测接口
-5. WHEN 检测模型更新 THEN Detection_Interface SHALL 支持热插拔式模型替换
-6. WHEN 接口调用 THEN Detection_Interface SHALL 返回标准格式：[bbox, confidence, category, roi_features]
-7. WHEN roi_features可用 THEN Detection_Interface SHALL 输出检测模型backbone的ROI特征向量（可选）
-8. WHEN roi_features不可用 THEN VQA_System SHALL 从ROI图像重新提取特征
+1. WHEN ROI测试需要 THEN ROI_Tester SHALL 支持直接输入ROI图像进行测试
+2. WHEN 全图检测需要 THEN Detection_Pipeline SHALL 对接外部检测模型完成全链路
+3. WHEN 自定义部署需要 THEN Custom_Solution SHALL 提供灵活的API接口
+4. WHEN 部署配置 THEN Deployment_Manager SHALL 支持配置文件驱动的部署管理
+5. WHEN 性能监控 THEN Deployment_Manager SHALL 提供实时性能监控和告警
 
-### 需求 2: 动态VQA模型架构
+### 需求 5: T4性能优化与基准测试
 
-**用户故事:** 作为算法工程师，我希望系统能够根据问题复杂度动态选择最适合的模型架构，平衡准确性和效率。
+**用户故事:** 作为性能工程师，我希望SpeedVQA模型在T4显卡上实现毫秒级推理性能，满足实时应用需求。
 
 #### 验收标准
 
-1. WHEN 问题输入系统 THEN Question_Analyzer SHALL 分析问题复杂度和类型
-2. WHEN 问题为简单二分类 THEN VQA_System SHALL 使用独立的Binary_Classifier
-3. WHEN 多个问题可共享特征 THEN VQA_System SHALL 使用Multi_Classifier
-4. WHEN 问题按类型分组 THEN VQA_System SHALL 使用对应的Grouped_Classifier
-5. WHEN 模型架构切换 THEN VQA_System SHALL 保持接口一致性
+1. WHEN 模型推理执行 THEN Performance_Monitor SHALL 记录单次推理延迟
+2. WHEN 批量推理执行 THEN Performance_Monitor SHALL 统计平均吞吐量
+3. WHEN TensorRT优化启用 THEN Model_Exporter SHALL 将推理速度提升至少50%
+4. WHEN T4显卡部署 THEN ROI_Inferencer SHALL 实现单次推理<50ms的目标
+5. WHEN 性能基准测试 THEN Performance_Monitor SHALL 生成详细的性能报告
+
+### 需求 6: ROI推理验证系统
+
+**用户故事:** 作为算法工程师，我希望能够使用训练好的SpeedVQA模型对ROI图片进行问答推理，验证模型的实际效果。
+
+```mermaid
+flowchart TD
+    A[训练完成的模型] --> B[模型加载]
+    B --> C[ROI图像输入]
+    C --> D[图像预处理]
+    D --> E[特征提取]
+    
+    F[问题文本] --> G[文本编码]
+    G --> H[问题特征]
+    
+    E --> I[多模态融合]
+    H --> I
+    I --> J[VQA推理]
+    J --> K["YES/NO + 置信度"]
+    
+    K --> L[结果可视化]
+    L --> M[推理性能统计]
+    
+    style J fill:#e8f5e8
+    style K fill:#e1f5fe
+    style M fill:#fff3e0
+```
+
+#### 验收标准
+
+1. WHEN 模型训练完成 THEN ROI_Inferencer SHALL 支持加载训练好的SpeedVQA模型
+2. WHEN ROI图像输入 THEN ROI_Inferencer SHALL 对单张ROI图像进行问答推理
+3. WHEN 批量推理需要 THEN ROI_Inferencer SHALL 支持批量ROI图像的高效推理
+4. WHEN 推理完成 THEN ROI_Inferencer SHALL 输出YES/NO答案、置信度和推理时间
+5. WHEN 结果验证 THEN ROI_Inferencer SHALL 提供推理结果的可视化展示
 
 ### 需求 3: 增强输出信息
 
@@ -555,27 +612,99 @@ flowchart TD
 
 ## 分阶段实施优先级
 
-### Phase 1: VQA核心能力 (优先级: 最高)
-- L1基础检测接口设计与对接
-- L2 VQA问答层完整实现
-- ROI智能合并与群体处理
-- 复杂行为问答能力
-- T4性能优化与部署
+### Phase 1: 核心训练系统 (优先级: 最高) 🎯
+**目标：确保SpeedVQA模型能够成功训练**
+- 数据准备与标注工具
+- SpeedVQA模型训练系统（MobileNetV3 + DistilBERT + MLP）
+- 训练监控和验证
+- 模型性能评估
+- 基础数据增强和优化
 
-### Phase 2: 属性识别扩展 (优先级: 中)
-- L3属性识别层开发
-- 人体/车辆/物体属性识别
-- 特征向量化能力
-- 向量数据库基础建设
+### Phase 2: 推理验证系统 (优先级: 高) 🚀
+**目标：确保训练的模型能够对ROI图片进行问答推理**
+- 模型导出(.pt/.onnx/.engine)
+- ROI图像推理验证
+- 推理性能优化(TensorRT)
+- T4显卡性能基准测试
+- 推理结果可视化
 
-### Phase 3: 向量搜索应用 (优先级: 低)
-- L4向量搜索层实现
-- 以图搜图功能
-- 语义搜索能力
-- 高级检索应用
+### Phase 3: 部署集成方案 (优先级: 中) 🔧
+**目标：支持多种部署方案和外部系统集成**
+- 全图+检测链路集成
+- 自定义解决方案接口
+- 配置文件驱动的部署
+- 批量推理支持
 
-### 架构扩展性保证
-- 标准化接口设计，支持热插拔
-- 模块化架构，各层独立扩展
-- 向后兼容，平滑升级路径
-- 性能基准，确保扩展不影响核心功能
+### Phase 4: 服务化系统 (优先级: 低) 🌐
+**目标：完整的前后端服务系统**
+- FastAPI后端服务
+- React/Vue前端界面
+- 用户反馈收集
+- 在线学习机制
+- 企业级管理功能
+
+### 当前阶段重点
+**Phase 1 + Phase 2**：专注于训练和推理的核心能力，确保技术可行性和性能达标，为后续服务化奠定坚实基础。
+
+## 扩展性接口设计
+
+### 核心接口规范
+
+```python
+# 1. 数据接口 - 支持多种数据源
+class DataInterface:
+    def load_dataset(self, data_path: str) -> Dataset
+    def validate_annotations(self, annotations: List[Dict]) -> bool
+    def export_format(self, format_type: str) -> Dict
+
+# 2. 模型接口 - 支持模型热插拔
+class ModelInterface:
+    def load_model(self, model_path: str, format: str) -> Model
+    def inference(self, roi_image: np.ndarray, question: str) -> Dict
+    def batch_inference(self, batch_data: List[Tuple]) -> List[Dict]
+
+# 3. 部署接口 - 支持多种部署方案
+class DeploymentInterface:
+    def setup_roi_mode(self, config: Dict) -> None
+    def setup_detection_pipeline(self, detector_config: Dict) -> None
+    def setup_custom_solution(self, custom_config: Dict) -> None
+
+# 4. 扩展接口 - 预留未来功能
+class ExtensionInterface:
+    def register_detector(self, detector: Any) -> None
+    def register_attribute_recognizer(self, recognizer: Any) -> None
+    def register_feedback_collector(self, collector: Any) -> None
+```
+
+### 配置驱动的扩展性
+
+```yaml
+# speedvqa_config.yaml - 统一配置文件
+system:
+  mode: "training"  # training, inference, deployment
+  
+data:
+  source_type: "local"  # local, remote, database
+  annotation_format: "coco"  # coco, yolo, custom
+  
+model:
+  architecture: "speedvqa"
+  backbone: "mobilenet_v3_small"
+  text_encoder: "distilbert-base-uncased"
+  
+deployment:
+  mode: "roi_test"  # roi_test, detection_pipeline, custom
+  optimization: "tensorrt"  # pytorch, onnx, tensorrt
+  
+extensions:
+  enable_attributes: false
+  enable_vector_search: false
+  enable_online_learning: false
+```
+
+### 模块化组件设计
+
+- **核心模块**：训练、推理、导出（必需）
+- **扩展模块**：检测对接、属性识别、向量搜索（可选）
+- **服务模块**：前后端、API、管理界面（独立）
+- **接口模块**：标准化接口、配置管理（通用）
