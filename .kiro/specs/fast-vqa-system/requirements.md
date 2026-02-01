@@ -97,6 +97,10 @@ graph TD
 ## 术语表
 
 - **VQA_System**: 视觉问答系统主体
+- **Data_Loader**: 数据加载器（支持X-AnyLabeling格式）
+- **Data_Validator**: 数据验证器（标注质量检查）
+- **Data_Splitter**: 数据分割器（训练/验证/测试划分）
+- **Data_Exporter**: 数据导出器（标准格式输出）
 - **SpeedVQA_Trainer**: 模型训练器（支持独立训练和验证）
 - **Model_Exporter**: 模型导出器（支持.pt/.onnx/.engine格式）
 - **Deployment_Manager**: 部署管理器（支持多种部署方案）
@@ -106,7 +110,6 @@ graph TD
 - **ROI_Inferencer**: ROI推理器（对ROI图像进行问答推理）
 - **Performance_Monitor**: 性能监控器（推理时间、准确率统计）
 - **Result_Visualizer**: 结果可视化器（推理结果展示）
-- **Online_Annotator**: 客户现场在线标注工具
 - **Online_Learner**: 客户现场在线学习模块
 - **ROI_Merger**: ROI区域合并模块（处理群体目标）
 - **ROI_Extractor**: 自适应ROI提取器（根据场景调整策略）
@@ -120,14 +123,14 @@ graph TD
 
 ## 需求
 
-### 需求 1: 独立数据准备与标注
+### 需求 1: 外部标注工具集成与数据处理
 
-**用户故事:** 作为数据工程师，我希望系统提供完整的数据准备工具链，支持高效的问答对标注和数据质量管理。
+**用户故事:** 作为数据工程师，我希望系统能够无缝集成X-AnyLabeling等外部标注工具，支持多种数据格式的加载和处理。
 
 #### 验收标准
 
-1. WHEN 原始图像输入 THEN Data_Annotator SHALL 提供直观的ROI标注界面
-2. WHEN ROI标注完成 THEN Data_Annotator SHALL 支持问答对快速标注
+1. WHEN X-AnyLabeling标注数据输入 THEN Data_Loader SHALL 支持单个JSON和JSONL两种格式
+2. WHEN 标注数据加载 THEN Data_Loader SHALL 自动标准化中英文答案格式
 3. WHEN 标注数据生成 THEN Data_Validator SHALL 自动检测标注质量和一致性
 4. WHEN 数据集划分 THEN Data_Splitter SHALL 按7:2:1比例划分训练/验证/测试集
 5. WHEN 数据导出 THEN Data_Exporter SHALL 生成标准格式的训练数据
