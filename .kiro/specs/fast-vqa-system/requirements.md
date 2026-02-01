@@ -2,7 +2,15 @@
 
 ## 介绍
 
-基于目标检测的极速视觉问答系统是一个创新的垂直行业AI解决方案，通过VQA技术替代传统多类别检测方法。系统采用**解耦式两阶段架构**：通用目标检测→专业问答推理，专门针对T4显卡优化，实现毫秒级响应。相比传统方法需要为每个行为准备大量样本，本方案通过问答对的方式大幅降低数据标注成本，快速适应垂直行业需求。
+基于目标检测的极速视觉问答系统是一个创新的垂直行业AI解决方案，通过VQA技术替代传统多类别检测方法。系统采用**分层扩展架构**：基础检测层（外部训练）→ VQA问答层（核心开发）→ 属性识别层（扩展）→ 向量搜索层（高级），专门针对T4显卡优化，实现毫秒级响应。
+
+**架构分层设计：**
+- **L1 基础检测层**：人员/车辆/动物/物体检测（外部已有，预留接口）
+- **L2 VQA问答层**：核心开发重点，处理复杂行为问答
+- **L3 属性识别层**：人体属性、车辆属性等细粒度特征（扩展功能）
+- **L4 向量搜索层**：以图搜图、语义搜索等高级应用（未来规划）
+
+相比传统方法需要为每个行为准备大量样本，本方案通过问答对的方式大幅降低数据标注成本，快速适应垂直行业需求。
 
 ## 创新方案对比
 
@@ -35,82 +43,90 @@ graph TD
     style I2 fill:#e3f2fd
 ```
 
-## 独立模块化架构设计
+## 分层扩展架构设计
 
 ```mermaid
 graph TD
-    A[输入图像] --> B[并行检测器组]
+    A[输入图像] --> B[L1: 基础检测层]
     
-    subgraph "独立检测模块"
-        B --> C[YOLOv8s人体检测]
-        B --> D[YOLOv8s车辆检测]
-        B --> E[YOLOv8s动物检测]
-        B --> F[YOLOv8s物体检测]
+    subgraph "L1: 基础检测层 (外部训练模型)"
+        B --> C[人员检测接口]
+        B --> D[车辆检测接口]
+        B --> E[动物检测接口]
+        B --> F[物体检测接口]
     end
     
-    C --> G[ROI提取与扩大10-20%]
+    C --> G[ROI提取与智能合并]
     D --> G
     E --> G
     F --> G
     
-    G --> H[ROI数据库]
-    
-    I[垂直行业问题] --> J[问题复杂度分析]
-    J --> K{选择模型架构}
-    K -->|简单问题| L[二分类模型]
-    K -->|复杂问题| M[多分类共享模型]
-    K -->|分组问题| N[按类型分组模型]
-    
-    H --> O[MobileNetV3特征提取]
-    I --> P[问题文本编码]
-    O --> Q[多模态融合]
-    P --> Q
-    Q --> L
-    Q --> M
-    Q --> N
-    
-    L --> R[YES/NO + 置信度 + 关键区域]
-    M --> R
-    N --> R
-    
-    subgraph "客户现场扩展"
-        S[在线标注工具] --> T[新问答对数据]
-        T --> U[在线学习模块]
-        U --> V[模型增量更新]
-        V --> L
-        V --> M
-        V --> N
+    subgraph "L2: VQA问答层 (核心开发)"
+        G --> H[ROI数据库]
+        I[垂直行业问题] --> J[问题复杂度分析]
+        J --> K{选择模型架构}
+        K -->|简单问题| L[二分类模型]
+        K -->|复杂问题| M[多分类共享模型]
+        K -->|分组问题| N[按类型分组模型]
+        
+        H --> O[MobileNetV3特征提取]
+        I --> P[问题文本编码]
+        O --> Q[多模态融合]
+        P --> Q
+        Q --> L
+        Q --> M
+        Q --> N
+        
+        L --> R[YES/NO + 置信度 + 关键区域]
+        M --> R
+        N --> R
     end
     
-    W[TensorRT优化] --> C
-    W --> D
-    W --> E
-    W --> F
-    W --> O
-    W --> L
-    W --> M
-    W --> N
+    subgraph "L3: 属性识别层 (扩展功能)"
+        O --> S[人体属性识别]
+        O --> T[车辆属性识别]
+        O --> U[物体属性识别]
+        S --> V[属性特征向量]
+        T --> V
+        U --> V
+    end
     
-    style C fill:#e1f5fe
-    style D fill:#e1f5fe
-    style E fill:#e1f5fe
-    style F fill:#e1f5fe
-    style H fill:#f3e5f5
-    style K fill:#fff3e0
+    subgraph "L4: 向量搜索层 (未来规划)"
+        V --> W[特征向量数据库]
+        W --> X[以图搜图]
+        W --> Y[语义搜索]
+        W --> Z[相似度检索]
+    end
+    
+    subgraph "优先级与扩展路径"
+        AA[Phase 1: L2 VQA核心] --> BB[Phase 2: L3 属性识别]
+        BB --> CC[Phase 3: L4 向量搜索]
+        DD[L1接口预留] --> AA
+    end
+    
+    style C fill:#f0f0f0
+    style D fill:#f0f0f0
+    style E fill:#f0f0f0
+    style F fill:#f0f0f0
     style R fill:#e8f5e8
-    style U fill:#fce4ec
+    style V fill:#e1f5fe
+    style W fill:#fff3e0
+    style AA fill:#fce4ec
 ```
 
 ## 术语表
 
 - **VQA_System**: 视觉问答系统主体
-- **Human_Detector**: 独立的人体检测模型
-- **Vehicle_Detector**: 独立的车辆检测模型  
-- **Animal_Detector**: 独立的动物检测模型
-- **Object_Detector**: 独立的物体检测模型
+- **Detection_Interface**: 基础检测模型接口（外部训练模型的标准接口）
+- **Attribute_Recognizer**: 属性识别器（人体/车辆/物体属性）
+- **Feature_Vectorizer**: 特征向量化模块
+- **Vector_Database**: 向量数据库（支持相似度检索）
+- **Image_Searcher**: 以图搜图模块
+- **Semantic_Searcher**: 语义搜索模块
 - **Online_Annotator**: 客户现场在线标注工具
 - **Online_Learner**: 客户现场在线学习模块
-- **ROI_Expander**: ROI区域扩大模块（10-20%扩展）
+- **ROI_Merger**: ROI区域合并模块（处理群体目标）
+- **ROI_Extractor**: 自适应ROI提取器（根据场景调整策略）
 - **Question_Analyzer**: 问题复杂度分析器
 - **Binary_Classifier**: 二分类VQA模型
 - **Multi_Classifier**: 多分类共享VQA模型
@@ -121,17 +137,40 @@ graph TD
 
 ## 需求
 
-### 需求 1: 独立基础检测模块
+### 需求 1: 基础检测接口设计
 
-**用户故事:** 作为算法工程师，我希望每个基础目标类别都有独立的检测模型，便于单独优化、调试和扩展。
+**用户故事:** 作为算法工程师，我希望系统提供标准化的基础检测接口，能够无缝对接外部训练的检测模型，专注于VQA核心能力开发。
+
+```python
+# Detection_Interface 标准返回格式
+detection_result = {
+    "bbox": [x_min, y_min, width, height],  # ROI边界框
+    "confidence": 0.95,                     # 检测置信度
+    "category": "person",                   # 目标类别
+    "roi_features": np.array([...]) or None # 可选：检测模型的ROI特征向量
+}
+
+# 两种特征获取策略：
+# 策略1：复用检测特征（推荐，性能更好）
+if detection_result["roi_features"] is not None:
+    vqa_features = detection_result["roi_features"]
+    
+# 策略2：VQA层重新提取（兼容性更好）  
+else:
+    roi_image = crop_roi(image, detection_result["bbox"])
+    vqa_features = vqa_feature_extractor(roi_image)
+```
 
 #### 验收标准
 
-1. WHEN 输入图像到系统 THEN Human_Detector SHALL 独立检测人体目标
-2. WHEN 输入图像到系统 THEN Vehicle_Detector SHALL 独立检测车辆目标  
-3. WHEN 输入图像到系统 THEN Animal_Detector SHALL 独立检测动物目标
-4. WHEN 输入图像到系统 THEN Object_Detector SHALL 独立检测物体目标
-5. WHEN 任一检测器需要优化 THEN VQA_System SHALL 支持单独模型更新而不影响其他检测器
+1. WHEN 外部人员检测模型接入 THEN Detection_Interface SHALL 提供标准化的人员检测接口
+2. WHEN 外部车辆检测模型接入 THEN Detection_Interface SHALL 提供标准化的车辆检测接口
+3. WHEN 外部动物检测模型接入 THEN Detection_Interface SHALL 提供标准化的动物检测接口
+4. WHEN 外部物体检测模型接入 THEN Detection_Interface SHALL 提供标准化的物体检测接口
+5. WHEN 检测模型更新 THEN Detection_Interface SHALL 支持热插拔式模型替换
+6. WHEN 接口调用 THEN Detection_Interface SHALL 返回标准格式：[bbox, confidence, category, roi_features]
+7. WHEN roi_features可用 THEN Detection_Interface SHALL 输出检测模型backbone的ROI特征向量（可选）
+8. WHEN roi_features不可用 THEN VQA_System SHALL 从ROI图像重新提取特征
 
 ### 需求 2: 动态VQA模型架构
 
@@ -335,6 +374,173 @@ flowchart TD
 4. WHEN 模型性能满足要求 THEN VQA_System SHALL 支持热更新部署
 5. WHEN 现场调试需要 THEN VQA_System SHALL 提供详细的调试日志和可视化工具
 
+### 需求 12: 智能ROI合并与群体目标处理
+
+**用户故事:** 作为算法工程师，我希望系统能够智能处理群体目标场景，通过ROI合并策略优化多人互动行为的检测效果。
+
+```mermaid
+flowchart TD
+    A[多个检测框] --> B[距离计算]
+    B --> C{是否需要合并}
+    C -->|是| D[ROI合并策略]
+    C -->|否| E[独立ROI处理]
+    
+    D --> F[群体ROI扩展]
+    F --> G[群体行为VQA]
+    G --> H[多人互动问答]
+    
+    E --> I[单体ROI扩展]
+    I --> J[个体行为VQA]
+    
+    H --> K[最终结果输出]
+    J --> K
+    
+    style D fill:#e1f5fe
+    style G fill:#e8f5e8
+    style K fill:#f3e5f5
+```
+
+#### 验收标准
+
+1. WHEN 检测到多个相邻人体目标 THEN ROI_Merger SHALL 计算目标间距离和重叠度
+2. WHEN 目标间距离小于阈值 THEN ROI_Merger SHALL 合并为群体ROI并扩展边界
+3. WHEN 群体ROI生成 THEN VQA_System SHALL 支持群体行为问答（如"是否有人员打架？"）
+4. WHEN 单独目标检测 THEN ROI_Expander SHALL 按标准策略扩展10-20%边界
+5. WHEN ROI合并策略执行 THEN VQA_System SHALL 同时保留个体和群体两种分析结果
+
+### 需求 13: 复杂行为VQA问答
+
+**用户故事:** 作为业务用户，我希望系统能够通过VQA方式处理传统检测难以解决的复杂行为识别，如人员打架、异常聚集等。
+
+#### 验收标准
+
+1. WHEN 输入复杂行为问题 THEN VQA_System SHALL 支持多人互动行为问答
+2. WHEN 问题涉及"人员打架" THEN VQA_System SHALL 分析群体ROI中的动作特征
+3. WHEN 问题涉及"异常聚集" THEN VQA_System SHALL 评估人员密度和分布模式
+4. WHEN 问题涉及"危险行为" THEN VQA_System SHALL 结合个体和环境上下文分析
+5. WHEN 复杂行为检测完成 THEN VQA_System SHALL 提供行为置信度和关键证据区域
+
+### 需求 14: 自适应ROI提取策略
+
+**用户故事:** 作为算法工程师，我希望系统能够根据不同场景和目标类型，自适应地调整ROI提取策略，优化问答效果。
+
+```mermaid
+flowchart TD
+    A[检测结果] --> B[场景分析]
+    B --> C{目标类型判断}
+    
+    C -->|单人| D[标准扩展策略<br/>10-20%边界]
+    C -->|多人相邻| E[群体合并策略<br/>包含交互区域]
+    C -->|车辆| F[车辆专用策略<br/>包含周边环境]
+    C -->|物体| G[物体策略<br/>包含使用上下文]
+    
+    D --> H[ROI质量评估]
+    E --> H
+    F --> H
+    G --> H
+    
+    H --> I{质量是否达标}
+    I -->|是| J[输出最终ROI]
+    I -->|否| K[策略调整]
+    K --> C
+    
+    style E fill:#e1f5fe
+    style H fill:#fff3e0
+    style J fill:#e8f5e8
+```
+
+#### 验收标准
+
+1. WHEN 检测单个目标 THEN ROI_Extractor SHALL 应用标准10-20%边界扩展
+2. WHEN 检测多个相邻目标 THEN ROI_Extractor SHALL 应用群体合并策略
+3. WHEN 目标为车辆类型 THEN ROI_Extractor SHALL 包含周边道路环境信息
+4. WHEN 目标为物体类型 THEN ROI_Extractor SHALL 包含使用上下文和人物交互
+5. WHEN ROI质量不达标 THEN ROI_Extractor SHALL 自动调整提取策略并重新处理
+
+### 需求 15: 属性识别扩展能力
+
+**用户故事:** 作为产品经理，我希望系统具备属性识别扩展能力，支持人体属性、车辆属性等细粒度特征识别，为后续高级应用奠定基础。
+
+```mermaid
+flowchart TD
+    A[ROI特征] --> B{目标类型}
+    
+    B -->|人体| C[人体属性识别]
+    B -->|车辆| D[车辆属性识别]
+    B -->|物体| E[物体属性识别]
+    
+    C --> F[年龄/性别/服装/姿态]
+    D --> G[颜色/品牌/类型/状态]
+    E --> H[材质/用途/状态/关系]
+    
+    F --> I[属性特征向量]
+    G --> I
+    H --> I
+    
+    I --> J[向量数据库存储]
+    J --> K[相似度检索准备]
+    
+    style C fill:#e1f5fe
+    style D fill:#e1f5fe
+    style E fill:#e1f5fe
+    style I fill:#e8f5e8
+    style K fill:#fff3e0
+```
+
+#### 验收标准
+
+1. WHEN 人体ROI输入 THEN Attribute_Recognizer SHALL 识别年龄、性别、服装、姿态等属性
+2. WHEN 车辆ROI输入 THEN Attribute_Recognizer SHALL 识别颜色、品牌、类型、状态等属性
+3. WHEN 物体ROI输入 THEN Attribute_Recognizer SHALL 识别材质、用途、状态等属性
+4. WHEN 属性识别完成 THEN Feature_Vectorizer SHALL 生成标准化特征向量
+5. WHEN 特征向量生成 THEN Vector_Database SHALL 支持高效存储和索引
+
+### 需求 16: 向量搜索与检索能力
+
+**用户故事:** 作为业务用户，我希望系统支持以图搜图和语义搜索功能，能够快速检索相似目标和语义相关内容。
+
+```mermaid
+flowchart TD
+    A[查询输入] --> B{搜索类型}
+    
+    B -->|以图搜图| C[图像特征提取]
+    B -->|语义搜索| D[文本语义编码]
+    
+    C --> E[查询向量生成]
+    D --> E
+    
+    E --> F[向量相似度计算]
+    F --> G[Vector_Database检索]
+    G --> H[相似度排序]
+    H --> I[结果返回]
+    
+    J[历史ROI库] --> G
+    K[属性标签库] --> G
+    
+    style E fill:#e1f5fe
+    style G fill:#e8f5e8
+    style I fill:#f3e5f5
+```
+
+#### 验收标准
+
+1. WHEN 用户上传查询图像 THEN Image_Searcher SHALL 提取图像特征向量
+2. WHEN 用户输入语义查询 THEN Semantic_Searcher SHALL 编码文本语义向量
+3. WHEN 向量检索执行 THEN Vector_Database SHALL 返回Top-K相似结果
+4. WHEN 搜索结果生成 THEN VQA_System SHALL 提供相似度分数和原始ROI信息
+5. WHEN 检索性能要求 THEN Vector_Database SHALL 支持毫秒级向量检索响应
+
+### 需求 17: 分阶段扩展路线图
+
+**用户故事:** 作为项目经理，我希望系统按照优先级分阶段实施，确保核心功能优先交付，扩展功能有序推进。
+
+#### 验收标准
+
+1. WHEN Phase 1实施 THEN VQA_System SHALL 优先完成L2 VQA问答层核心功能
+2. WHEN Phase 1验收通过 THEN VQA_System SHALL 启动L3属性识别层开发
+3. WHEN Phase 2完成 THEN VQA_System SHALL 具备基础属性识别和向量化能力
+4. WHEN Phase 3规划 THEN VQA_System SHALL 设计L4向量搜索层详细方案
+5. WHEN 各阶段交付 THEN VQA_System SHALL 保持向后兼容和平滑升级
 ### 需求 11: 持续学习与优化
 
 **用户故事:** 作为产品经理，我希望系统具备持续学习能力，能够从生产环境的反馈中不断优化模型性能。
@@ -346,3 +552,30 @@ flowchart TD
 3. WHEN 新样本收集 THEN VQA_System SHALL 支持在线学习和模型更新
 4. WHEN A/B测试需要 THEN VQA_System SHALL 支持多版本模型并行部署
 5. WHEN 优化完成 THEN VQA_System SHALL 提供模型性能改进报告
+
+## 分阶段实施优先级
+
+### Phase 1: VQA核心能力 (优先级: 最高)
+- L1基础检测接口设计与对接
+- L2 VQA问答层完整实现
+- ROI智能合并与群体处理
+- 复杂行为问答能力
+- T4性能优化与部署
+
+### Phase 2: 属性识别扩展 (优先级: 中)
+- L3属性识别层开发
+- 人体/车辆/物体属性识别
+- 特征向量化能力
+- 向量数据库基础建设
+
+### Phase 3: 向量搜索应用 (优先级: 低)
+- L4向量搜索层实现
+- 以图搜图功能
+- 语义搜索能力
+- 高级检索应用
+
+### 架构扩展性保证
+- 标准化接口设计，支持热插拔
+- 模块化架构，各层独立扩展
+- 向后兼容，平滑升级路径
+- 性能基准，确保扩展不影响核心功能
