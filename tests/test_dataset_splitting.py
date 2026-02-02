@@ -41,6 +41,16 @@ class TestDatasetSplittingCorrectness:
         """创建测试数据集"""
         from PIL import Image
         import numpy as np
+        import shutil
+        
+        # 清空之前的数据
+        if self.images_dir.exists():
+            shutil.rmtree(self.images_dir)
+        if self.annotations_dir.exists():
+            shutil.rmtree(self.annotations_dir)
+        
+        self.images_dir.mkdir(exist_ok=True)
+        self.annotations_dir.mkdir(exist_ok=True)
         
         questions = [
             "图片中有人吗？", "是否存在车辆？", "有动物吗？", "图片清晰吗？", "是白天吗？",

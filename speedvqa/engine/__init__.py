@@ -13,6 +13,13 @@ from .optimizers import (
     build_scheduler,
     build_optimization_components
 )
+from .hyperparameter_optimizer import (
+    HyperparameterOptimizer,
+    ParameterSpace,
+    OptimizationConfig,
+    TrialResult,
+    create_parameter_space_from_config
+)
 
 __all__ = [
     'train',
@@ -22,5 +29,10 @@ __all__ = [
     'OptimizationBuilder',
     'build_optimizer',
     'build_scheduler',
-    'build_optimization_components'
+    'build_optimization_components',
+    'HyperparameterOptimizer',
+    'ParameterSpace',
+    'OptimizationConfig',
+    'TrialResult',
+    'create_parameter_space_from_config'
 ]

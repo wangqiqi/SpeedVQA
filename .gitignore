@@ -131,7 +131,95 @@ tb_logs/
 .coverage
 htmlcov/
 .pytest_cache/
+.hypothesis/
 
 # Documentation
 docs/_build/
 site/
+
+# Temporary test files
+test_runs/
+test_outputs/
+test_data/
+*.test
+*.spec
+
+# Benchmark reports
+benchmark_reports/
+performance_reports/
+*.json
+*.csv
+
+# Cache files
+*.cache
+.cache/
+__pycache__/
+*.pyc
+*.pyo
+
+# Hypothesis
+.hypothesis/
+hypothesis_examples/
+
+# Kiro IDE
+.kiro/settings/
+.kiro/cache/
+
+# Temporary directories
+.tmp/
+.temp/
+tmp_*/
+temp_*/
+
+# Model checkpoints and exports
+*.onnx
+*.pb
+*.savedmodel/
+model_exports/
+exported_models/
+
+# Inference outputs
+inference_outputs/
+predictions/
+results_*/
+
+# Visualization outputs
+visualizations/
+plots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# System files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE temporary files
+*.sublime-workspace
+*.sublime-project
+.vscode/settings.json
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Python virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Package files
+dist/
+build/
+*.egg-info/
+*.whl
+
+# Miscellaneous
+.env.local
+.env.*.local
+*.pid
+*.seed
+*.version

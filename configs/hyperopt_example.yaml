@@ -1,0 +1,151 @@
+# 超参数优化配置示例
+
+# 优化方法配置
+optimization:
+  method: "bayesian_optuna"  # 'grid_search', 'bayesian_optuna', 'bayesian_skopt'
+  n_trials: 50
+  timeout: 3600  # 1小时超时
+  n_jobs: 4  # 并行作业数
+  random_state: 42
+  direction: "maximize"  # 'maximize' or 'minimize'
+  metric_name: "val_accuracy"
+  
+  # 早停配置
+  early_stopping: true
+  early_stopping_patience: 10
+  early_stopping_threshold: 0.01
+  
+  # 剪枝配置（仅Optuna）
+  pruning: true
+  pruning_warmup_steps: 5
+
+# 参数空间定义
+parameter_space:
+  # 学习率 - 对数空间搜索
+  learning_rate:
+    type: "float"
+    low: 1.0e-5
+    high: 1.0e-1
+    log: true
+  
+  # 批次大小
+  batch_size:
+    type: "int"
+    low: 16
+    high: 128
+    log: false
+  
+  # 优化器选择
+  optimizer_type:
+    type: "categorical"
+    choices: ["adam", "adamw", "sgd"]
+  
+  # 权重衰减
+  weight_decay:
+    type: "float"
+    low: 1.0e-6
+    high: 1.0e-2
+    log: true
+  
+  # Dropout率
+  dropout_rate:
+    type: "float"
+    low: 0.1
+    high: 0.5
+    log: false
+  
+  # 隐藏层维度
+  hidden_dim:
+    type: "int"
+    low: 256
+    high: 1024
+    log: false
+  
+  # 学习率调度器
+  scheduler_type:
+    type: "categorical"
+    choices: ["cosine", "step", "plateau"]
+  
+  # 固定参数
+  epochs:
+    type: "fixed"
+    value: 20
+  
+  num_workers:
+    type: "fixed"
+    value: 4
+
+# 模型配置（用于目标函数）
+model:
+  name: "speedvqa"
+  vision:
+    backbone: "mobilenet_v3_small"
+    feature_dim: 512
+    pretrained: true
+    dropout: 0.1
+  
+  text:
+    encoder: "distilbert-base-uncased"
+    feature_dim: 512
+    freeze_encoder: false
+  
+  fusion:
+    method: "concat"
+    hidden_dim: 1024
+    dropout: 0.3
+    use_layer_norm: true
+  
+  classifier:
+    hidden_dims: [512, 256]
+    num_classes: 2
+    dropout: 0.2
+    activation: "relu"
+  
+  loss:
+    type: "cross_entropy"
+    label_smoothing: 0.1
+
+# 数据配置
+data:
+  dataset_path: "data/vqa_dataset"
+  split:
+    train_ratio: 0.7
+    val_ratio: 0.2
+    test_ratio: 0.1
+    random_seed: 42
+  
+  dataloader:
+    batch_size: 32  # 会被超参数优化覆盖
+    shuffle: true
+    num_workers: 4
+    pin_memory: true
+    drop_last: true
+
+# 训练配置
+train:
+  device: "cuda"
+  epochs: 20  # 会被超参数优化覆盖
+  
+  strategy:
+    mixed_precision: true
+    gradient_clipping: true
+    gradient_clip_value: 1.0
+    accumulate_grad_batches: 1
+    
+    early_stopping:
+      enabled: true
+      patience: 5
+      min_delta: 0.001
+  
+  validation:
+    interval: 1
+    metric: "accuracy"
+  
+  logging:
+    tensorboard: false  # 超参数优化时关闭详细日志
+    wandb:
+      enabled: false
+    save_checkpoint_interval: 10
+  
+  save_dir: "hyperopt_experiments"
+  experiment_name: "speedvqa_hyperopt"
