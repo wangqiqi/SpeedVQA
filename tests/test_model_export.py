@@ -11,6 +11,11 @@ import shutil
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 import numpy as np
+import os
+
+# 禁用Hugging Face模型下载
+os.environ['HF_DATASETS_OFFLINE'] = '1'
+os.environ['TRANSFORMERS_OFFLINE'] = '1'
 
 from speedvqa.export.exporter import ModelExporter, ExportResult, ValidationResult, export_model
 from speedvqa.models.speedvqa import SpeedVQAModel, build_speedvqa_model
