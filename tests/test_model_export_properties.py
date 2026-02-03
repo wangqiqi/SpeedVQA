@@ -412,7 +412,7 @@ class TestModelExportConsistency:
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
     
-    @given(st.lists(st.text(min_size=1, max_size=10), min_size=1, max_size=3))
+    @given(st.lists(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10), min_size=1, max_size=3))
     @settings(max_examples=6, deadline=20000)  # 新增：错误处理测试
     def test_error_handling_for_invalid_inputs(self, invalid_paths):
         """

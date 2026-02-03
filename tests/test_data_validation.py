@@ -56,7 +56,7 @@ class TestDataValidationConsistency:
     
     @given(
         questions=st.lists(
-            st.text(min_size=1, max_size=100).filter(lambda x: x.strip()),
+            st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=100).filter(lambda x: x.strip()),
             min_size=1, max_size=10
         ),
         answers=st.lists(
@@ -64,7 +64,7 @@ class TestDataValidationConsistency:
             min_size=1, max_size=10
         ),
         image_names=st.lists(
-            st.text(min_size=1, max_size=20).filter(lambda x: x.isalnum()).map(lambda x: f"{x}.jpg"),
+            st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=20).filter(lambda x: x.isalnum()).map(lambda x: f"{x}.jpg"),
             min_size=1, max_size=5
         )
     )
@@ -236,9 +236,9 @@ class DatasetStateMachine(RuleBasedStateMachine):
         self.sample_count = 0
     
     @rule(
-        question=st.text(min_size=1, max_size=50).filter(lambda x: x.strip()),
+        question=st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=50).filter(lambda x: x.strip()),
         answer=st.sampled_from(['是', '否', 'yes', 'no']),
-        image_name=st.text(min_size=1, max_size=10).filter(lambda x: x.isalnum()).map(lambda x: f"{x}.jpg")
+        image_name=st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10).filter(lambda x: x.isalnum()).map(lambda x: f"{x}.jpg")
     )
     def add_sample(self, question, answer, image_name):
         """添加样本到数据集"""

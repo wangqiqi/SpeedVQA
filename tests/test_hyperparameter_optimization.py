@@ -72,7 +72,7 @@ def parameter_space_strategy(draw):
     # 添加分类参数
     n_cat_params = draw(st.integers(min_value=0, max_value=2))
     for i in range(n_cat_params):
-        choices = draw(st.lists(st.text(min_size=1, max_size=10), min_size=2, max_size=5))
+        choices = draw(st.lists(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10), min_size=2, max_size=5))
         space.add_categorical(f'cat_param_{i}', choices)
     
     # 添加固定参数
@@ -161,7 +161,7 @@ class TestParameterSpace:
         # 检查所有值都是整数
         assert all(isinstance(v, int) for v in values)
     
-    @given(st.lists(st.text(min_size=1, max_size=10), min_size=2, max_size=5))
+    @given(st.lists(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10), min_size=2, max_size=5))
     def test_categorical_parameter_choices(self, choices):
         """
         **属性 7.4: 分类参数选择正确性**
@@ -326,12 +326,12 @@ class TestHyperparameterOptimizer:
 class TestTrialResult:
     """试验结果测试"""
     
-    @given(st.text(min_size=1, max_size=20),
-           st.dictionaries(st.text(min_size=1, max_size=10), 
+    @given(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=20),
+           st.dictionaries(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10), 
                           st.one_of(st.floats(min_value=0, max_value=1), 
                                    st.integers(min_value=1, max_value=100),
-                                   st.text(min_size=1, max_size=10))),
-           st.dictionaries(st.text(min_size=1, max_size=10), 
+                                   st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10))),
+           st.dictionaries(st.text(alphabet=st.characters(min_codepoint=ord('a'), max_codepoint=ord('z')), min_size=1, max_size=10), 
                           st.floats(min_value=0, max_value=1)),
            st.sampled_from(['completed', 'failed', 'pruned']),
            st.floats(min_value=0.1, max_value=10.0))

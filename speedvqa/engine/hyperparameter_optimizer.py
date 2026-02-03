@@ -222,8 +222,9 @@ class BaseOptimizer(ABC):
         self.logger = logging.getLogger(self.__class__.__name__)
         
         # 创建结果保存目录
-        self.save_dir = Path(f"hyperopt_results_{int(time.time())}")
-        self.save_dir.mkdir(exist_ok=True)
+        timestamp = time.strftime('%Y%m%d_%H%M%S')
+        self.save_dir = Path(f"runs/hyperopt/{timestamp}")
+        self.save_dir.mkdir(parents=True, exist_ok=True)
     
     @abstractmethod
     def optimize(self) -> TrialResult:
