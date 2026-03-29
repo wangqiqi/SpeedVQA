@@ -16,6 +16,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2325`
+
+### 新增
+
+- **文档**：**`docs/02_使用.md`** 增加「**参数调优与最佳实践**」：按目标速查表、调参顺序、分模块（vision/text/fusion/classifier/loss/data/train/inference/hardware）建议与实验记录习惯。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2310`
 
 ### 变更
