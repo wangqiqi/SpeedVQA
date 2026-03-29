@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-03-29] — tag `chore-speedvqa-monolithic-tree`
+
+### 变更
+
+- **单包树约定**：不设 **`src/`**，业务与资源均在仓库根下 **`speedvqa/`**（含 **`tests/`**、**`examples/`**、**`configs/`**、**`scripts/`** 等），与核心库同属一棵包树，便于统一维护。
+- 恢复 **`speedvqa/pytest.ini`**；**`pyproject.toml`** 增加 **`[project]`** 与 **`[tool.setuptools.packages.find]`**（`where = "."`，`include = ["speedvqa"]`），支持 **`pip install -e .`**。
+
+---
+
 ## [2026-03-29] — tag `chore-speedvqa-onekey-scripts`
 
 ### 变更

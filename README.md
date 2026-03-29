@@ -4,6 +4,8 @@
 
 **版本**：见 `speedvqa/__init__.py` 中的 `__version__`。
 
+**布局**：可运行模块、默认配置、示例与测试均在 **`speedvqa/`** 目录下；仓库根保留 `scripts/*.sh`、`docs/`、`pyproject.toml` 等脚手架。开发时可执行 **`pip install -e .`** 以可编辑方式安装包。
+
 ## 文档
 
 | 资源 | 说明 |

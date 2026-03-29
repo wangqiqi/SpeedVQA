@@ -43,9 +43,11 @@ SpeedVQA 是一套面向 **ROI（感兴趣区域）图像 + 自然语言问题**
 
 ## 仓库与包结构（概览）
 
+不设 **`src/`** 子目录：**配置、示例、测试与库代码** 均在 **`speedvqa/`** 一棵树下，根目录仅保留文档、许可、`pyproject.toml` 与薄包装 shell。
+
 ```
 SpeedVQA/
-├── speedvqa/             # 主 Python 包
+├── speedvqa/             # 主 Python 包（业务与测试边界均在此）
 │   ├── configs/          # 默认与实验 YAML（default.yaml、hyperopt 等）
 │   ├── examples/         # 导出、压测、超参等示例脚本
 │   ├── tests/            # pytest 与独立自测脚本（conftest.py、run_tests.py 等）

@@ -2,6 +2,20 @@
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "speedvqa"
+version = "1.0.0"
+description = "Lightweight binary VQA (ROI + text) with training, export, and inference"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["speedvqa"]
+
+[tool.setuptools.package-data]
+speedvqa = ["configs/*.yaml"]
+
 [tool.pytest.ini_options]
 # 从仓库根目录运行 pytest；等价配置见 speedvqa/pytest.ini（在 speedvqa/ 下 pytest -c pytest.ini）
 hypothesis_profile = "default"
