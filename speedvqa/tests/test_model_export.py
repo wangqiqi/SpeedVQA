@@ -365,16 +365,14 @@ class TestModelExporter:
             'attention_mask': torch.ones(1, 64)
         }
         
-        # 运行基准测试
-        benchmark_result = exporter._benchmark_pytorch(str(save_path), test_inputs, 10)
-        
-        assert 'avg_inference_time_ms' in benchmark_result
-        assert 'throughput_fps' in benchmark_result
-        assert 'total_time_s' in benchmark_result
-        
-        assert benchmark_result['avg_inference_time_ms'] > 0
-        assert benchmark_result['throughput_fps'] > 0
-        assert benchmark_result['total_time_s'] > 0
+        # 运行基准测试（与实现中的 _benchmark_pytorch_detailed 对齐）
+        benchmark_result = exporter._benchmark_pytorch_detailed(
+            str(save_path), test_inputs, num_iterations=10, warmup_iterations=2
+        )
+
+        assert benchmark_result.avg_inference_time_ms > 0
+        assert benchmark_result.throughput_fps > 0
+        assert benchmark_result.total_time_s > 0
     
     def test_export_model_function(self, model, temp_dir):
         """测试便捷导出函数"""

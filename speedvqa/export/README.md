@@ -45,7 +45,7 @@ model = SpeedVQAModel(config['model'])
 # 方法1: 使用便捷函数导出所有格式
 results = export_model(
     model=model,
-    output_dir='./exports',
+    output_dir='./runs/exports',
     model_name='speedvqa_v1',
     config=config,
     formats=['pytorch', 'onnx', 'tensorrt']

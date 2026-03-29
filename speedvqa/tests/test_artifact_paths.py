@@ -77,6 +77,18 @@ def test_resolve_torch_write_path_export(tmp_path, monkeypatch):
         experiment_name="ex",
         artifact_kind="export",
     )
+    assert out == tmp_path / "runs" / "exports" / "ex" / "model.pt"
+
+
+def test_resolve_torch_write_path_export_keeps_legacy_root_exports(tmp_path, monkeypatch):
+    _write_fake_repo(tmp_path)
+    (tmp_path / "exports" / "ex").mkdir(parents=True)
+    monkeypatch.chdir(tmp_path)
+    out = resolve_torch_write_path(
+        "exports/ex/model.pt",
+        experiment_name="ignored",
+        artifact_kind="export",
+    )
     assert out == tmp_path / "exports" / "ex" / "model.pt"
 
 

@@ -60,7 +60,7 @@ class ConfigurableTrainer:
         self.config = config
         self.train_config = config.get('train', {})
         
-        # 保存目录（仓库内强制落在 runs/exports/cache 下，避免根目录误写）
+        # 保存目录（仓库内强制落在 runs/（含 runs/exports）、根 exports/、cache/ 下，避免根目录误写）
         _raw_save = self.train_config.get('save_dir', './runs/train')
         _exp = self.train_config.get('experiment_name', 'speedvqa_exp')
         self.save_dir, self._save_dir_coerced = resolve_train_save_dir(_raw_save, _exp)

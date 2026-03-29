@@ -12,75 +12,18 @@
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Dict, Any
 import pytest
 import torch
-import torch.nn as nn
 import numpy as np
 from unittest.mock import patch
 
 from speedvqa.export.exporter import (
-    ModelExporter, PerformanceBenchmarkResult, MemoryUsageResult, 
-    ConsistencyResult
+    ModelExporter,
+    PerformanceBenchmarkResult,
+    MemoryUsageResult,
+    ConsistencyResult,
 )
-
-
-class SimpleTestModel(nn.Module):
-    """简单的测试模型"""
-    
-    def __init__(self, config: Dict[str, Any]):
-        super().__init__()
-        self.config = config
-        
-        # 简化的组件
-        vision_dim = config['vision']['feature_dim']
-        text_dim = config['text']['feature_dim']
-        fusion_dim = config['fusion']['hidden_dim']
-        
-        self.vision_encoder = nn.Sequential(
-            nn.Conv2d(3, 32, 3, padding=1),
-            nn.ReLU(),
-            nn.AdaptiveAvgPool2d((1, 1)),
-            nn.Flatten(),
-            nn.Linear(32, vision_dim)
-        )
-        
-        self.text_encoder = nn.Sequential(
-            nn.Embedding(1000, text_dim),
-            nn.AdaptiveAvgPool1d(1),
-            nn.Flatten()
-        )
-        
-        self.fusion = nn.Linear(vision_dim + text_dim, fusion_dim)
-        self.classifier = nn.Linear(fusion_dim, 2)
-    
-    def forward(self, batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        """前向传播"""
-        vision_features = self.vision_encoder(batch['image'])
-        
-        text_embeddings = self.text_encoder[0](batch['input_ids'])
-        text_features = text_embeddings.mean(dim=1)
-        text_features = self.text_encoder[2](text_features)
-        
-        fused_features = torch.cat([vision_features, text_features], dim=1)
-        fused_features = self.fusion(fused_features)
-        
-        logits = self.classifier(fused_features)
-        
-        return {
-            'logits': logits,
-            'vision_features': vision_features,
-            'text_features': text_features,
-            'fused_features': fused_features
-        }
-    
-    def get_model_info(self) -> Dict[str, Any]:
-        """获取模型信息"""
-        total_params = sum(p.numel() for p in self.parameters())
-        return {
-            'total_params': total_params,
-            'model_name': 'SimpleTestModel'
-        }
+from speedvqa.models.speedvqa import SpeedVQAModel
 
 
 class TestPerformanceBenchmarking:
@@ -88,14 +31,32 @@ class TestPerformanceBenchmarking:
     
     @pytest.fixture
     def config(self):
-        """测试配置"""
+        """测试配置（与真实 SpeedVQAModel / export 检查点格式一致）"""
         return {
             'model': {
-                'name': 'test_speedvqa',
-                'vision': {'feature_dim': 256, 'dropout': 0.1},
-                'text': {'feature_dim': 128, 'max_length': 32},
-                'fusion': {'hidden_dim': 384, 'dropout': 0.2},
-                'classifier': {'num_classes': 2, 'dropout': 0.1}
+                'name': 'speedvqa',
+                'vision': {
+                    'backbone': 'mobilenet_v3_small',
+                    'pretrained': False,
+                    'feature_dim': 512,
+                    'dropout': 0.1,
+                },
+                'text': {
+                    'encoder': 'distilbert-base-uncased',
+                    'max_length': 64,
+                    'feature_dim': 384,
+                    'freeze_encoder': True,
+                },
+                'fusion': {
+                    'method': 'concat',
+                    'hidden_dim': 896,
+                    'dropout': 0.3,
+                },
+                'classifier': {
+                    'hidden_dims': [256, 128],
+                    'num_classes': 2,
+                    'dropout': 0.2,
+                },
             },
             'data': {'image': {'size': [224, 224]}},
             'inference': {'device': 'cpu'},
@@ -104,17 +65,17 @@ class TestPerformanceBenchmarking:
                 'benchmark': {
                     'enabled': True,
                     'warmup_iterations': 2,
-                    'test_iterations': 5
-                }
-            }
+                    'test_iterations': 5,
+                },
+            },
         }
-    
+
     @pytest.fixture
     def model(self, config):
         """测试模型"""
-        model = SimpleTestModel(config['model'])
-        model.eval()
-        return model
+        m = SpeedVQAModel(config['model'])
+        m.eval()
+        return m
     
     @pytest.fixture
     def exporter(self, config):
@@ -140,8 +101,8 @@ class TestPerformanceBenchmarking:
         
         # 验证形状
         assert test_inputs['image'].shape == (batch_size, 3, 224, 224)
-        assert test_inputs['input_ids'].shape == (batch_size, 32)  # max_length from config
-        assert test_inputs['attention_mask'].shape == (batch_size, 32)
+        assert test_inputs['input_ids'].shape == (batch_size, 64)  # max_length from config
+        assert test_inputs['attention_mask'].shape == (batch_size, 64)
         
         # 验证数据类型
         assert test_inputs['image'].dtype == torch.float32

@@ -22,8 +22,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--output",
-        default="exports",
-        help="导出目录（相对仓库根目录）",
+        default="runs/exports",
+        help="导出目录（相对当前工作目录；仓库根执行时默认 runs/exports）",
     )
     parser.add_argument(
         "--name",

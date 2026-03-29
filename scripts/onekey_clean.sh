@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # 清理仓库内可再生的缓存与实验/导出产物（不删除虚拟环境 .venv/venv）。
+# 默认导出在 runs/exports/，删除 runs/ 即一并清理；仓库根 exports/ 仅用于清除旧版遗留目录。
 # 用法：./scripts/onekey_clean.sh [--dry-run|-n]
 
 set -euo pipefail
@@ -13,7 +14,7 @@ for arg in "$@"; do
     --dry-run|-n) DRY_RUN=1 ;;
     -h|--help)
       cat <<'EOF'
-清理 runs/、导出目录、基准/图表输出、测试缓存、Python 缓存等（见脚本内列表）。
+清理 runs/（含 runs/exports/ 等）、根目录遗留 exports/、cache、基准/图表输出、测试缓存、Python 缓存等（见脚本内列表）。
 
   ./scripts/onekey_clean.sh           # 执行删除
   ./scripts/onekey_clean.sh --dry-run # 仅打印将删除的路径
@@ -36,7 +37,9 @@ rm_path() {
 
 shopt -s nullglob
 
-# —— 仓库根目录下的约定目录（与 default.yaml / onekey_export 等一致）——
+# —— 仓库根目录下的约定目录 ——
+# runs/：训练、验证、runs/exports/（onekey_export 默认）、runs/benchmark_reports/ 等
+# exports/：旧版根目录导出（现默认已迁至 runs/exports/，此项仅清遗留）
 for name in runs exports cache test_runs test_outputs test_data \
   .pytest_cache .hypothesis build dist htmlcov .mypy_cache .ruff_cache .tox \
   mlruns tb_logs performance_reports \

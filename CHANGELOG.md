@@ -16,27 +16,21 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2410`
+
+### 变更
+
+- **产物路径**：默认导出 **`runs/exports/`**、基准报告 **`runs/benchmark_reports/`**；**`artifact_paths`**、**`speedvqa/configs/default.yaml`**、**`onekey_export`**、**`export/README`**、**`trainer`** 日志与 **`onekey_clean.sh`**（**`--help`** / 注释含 **`runs/exports`**）已对齐；仓库根 **`exports/`** 仍兼容旧布局。
+- **测试**：**`test_artifact_paths`** 增补 export 与兼容路径用例；**`test_model_export`** 修正 **`speedvqa.export.exporter.ort.InferenceSession`** mock、基准调用 **`_benchmark_pytorch_detailed`**；**`test_performance_benchmarking`** 改用 **`SpeedVQAModel`** 与导出检查点格式一致；**`test_t4_performance`** 在 CUDA 下输入张量与模型同设备；**Ruff** 清理 **`test_performance_benchmarking`** 未使用导入。
+- **计划**：**`plan.md`** 增补可排期执行阶段、验收指标、风险与周历等说明。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2234`
 
 ### 变更
 
 - **导出基准报告**：默认 **`export.benchmark_report_dir`** 由仓库根 **`./benchmark_reports`** 改为 **`./runs/benchmark_reports`**，与 **`runs/`** 产物约定一致；**`performance_benchmark_example.py`**、**`docs/02_使用.md`** 目录说明与 **`onekey_clean.sh`**（不再单独删根目录 **`benchmark_reports`**，随 **`runs/`** 一并清理）已同步。
-
----
-
-## [2026-03-29] — 变更（未发版 tag）
-
-### 变更
-
-- **导出路径**：默认导出目录由仓库根 **`exports/`** 改为 **`runs/exports/`**（**`onekey_export --output`**、**`artifact_paths.resolve_torch_write_path`** 的 export 改向、**`exporter.py` `__main__` 示例**）。仓库根 **`exports/`** 仍视为合法前缀以兼容旧目录；**`docs/02_使用.md`**、**`speedvqa/export/README.md`**、配置与代码注释已对齐。
-
----
-
-## [2026-03-29] — 文档（未发版 tag）
-
-### 变更
-
-- **计划**：**`plan.md`** 在保留算法评审摘要的基础上，增补 **可排期执行计划**：阶段划分（基线登记 / 轻量跨模态融合 / 可选 CLIP 对齐 / 整图上下文 backlog）、验收指标、任务清单、依赖、风险与回滚、建议周历与状态字段说明。
 
 ---
 

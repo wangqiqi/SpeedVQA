@@ -387,8 +387,11 @@ class TestBenchmarkEdgeCases:
         """Test benchmarking with different input sizes."""
         benchmark = T4Benchmark(simple_model)
         
-        # Test with different image sizes
-        sample_input_224 = (torch.randn(1, 3, 224, 224), torch.randn(1, 512))
+        # Test with不同输入尺寸（与模型同设备）
+        sample_input_224 = (
+            torch.randn(1, 3, 224, 224, device="cuda"),
+            torch.randn(1, 512, device="cuda"),
+        )
         results_224 = benchmark.benchmark_single_inference(sample_input_224, num_runs=5)
         
         assert results_224['mean_latency_ms'] > 0
