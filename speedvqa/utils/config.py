@@ -6,7 +6,6 @@ SpeedVQA配置管理系统
 """
 
 import yaml
-import os
 from typing import Dict, Any, Optional
 from pathlib import Path
 import argparse

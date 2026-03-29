@@ -9,7 +9,6 @@
 - 摘要报告生成
 """
 
-import os
 import numpy as np
 from typing import Dict, List, Any, Optional, Tuple, Union
 from pathlib import Path
@@ -142,7 +141,7 @@ class ResultVisualizer:
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", self.font_size)
                 font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", self.font_size - 4)
-            except:
+            except OSError:
                 font = ImageFont.load_default()
                 font_small = font
             
@@ -538,7 +537,7 @@ def build_result_visualizer(config: Optional[Dict[str, Any]] = None) -> ResultVi
     
     # 打印可视化器信息
     info = visualizer.get_visualization_info()
-    print(f"\n=== Result Visualizer Info ===")
+    print("\n=== Result Visualizer Info ===")
     print(f"Font Size: {info['font_size']}")
     print(f"Text Color: {info['text_color']}")
     print(f"Box Color: {info['box_color']}")

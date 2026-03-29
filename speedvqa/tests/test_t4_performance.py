@@ -7,9 +7,7 @@ Tests performance targets including <50ms inference latency on T4 GPUs.
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
 from hypothesis import given, strategies as st, settings, HealthCheck
-import time
 
 from speedvqa.benchmark.t4_benchmark import T4Benchmark
 
@@ -46,14 +44,14 @@ def simple_model():
     """Create a simple VQA model for testing."""
     model = SimpleVQAModel()
     model.eval()
-    return model
+    return model.cuda()
 
 
 @pytest.fixture
 def sample_input():
     """Create sample input tensors."""
-    image = torch.randn(1, 3, 224, 224)
-    text_embedding = torch.randn(1, 512)
+    image = torch.randn(1, 3, 224, 224, device="cuda")
+    text_embedding = torch.randn(1, 512, device="cuda")
     return (image, text_embedding)
 
 
@@ -67,13 +65,13 @@ def create_simple_model_for_property():
     """Create a simple VQA model (for use in property tests)."""
     model = SimpleVQAModel()
     model.eval()
-    return model
+    return model.cuda()
 
 
 def create_sample_input_for_property():
     """Create sample input tensors (for use in property tests)."""
-    image = torch.randn(1, 3, 224, 224)
-    text_embedding = torch.randn(1, 512)
+    image = torch.randn(1, 3, 224, 224, device="cuda")
+    text_embedding = torch.randn(1, 512, device="cuda")
     return (image, text_embedding)
 
 
@@ -336,7 +334,7 @@ class TestPerformanceTargets:
         
         # Log the actual latency for reference
         print(f"\nT4 Inference Latency: {mean_latency:.2f}ms")
-        print(f"Target: <50ms")
+        print("Target: <50ms")
         print(f"Status: {'✓ PASS' if mean_latency < 50 else '✗ FAIL'}")
         
         # The test should pass if latency is under 50ms

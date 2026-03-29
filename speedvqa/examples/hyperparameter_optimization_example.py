@@ -5,7 +5,7 @@
 演示如何使用SpeedVQA的超参数优化系统进行模型调优。
 """
 
-import os
+import importlib.util
 import sys
 import yaml
 import numpy as np
@@ -133,9 +133,7 @@ def example_2_config_file_parameter_space():
     
     # 如果配置使用贝叶斯优化但optuna不可用，则改用网格搜索
     if opt_config.method in ['bayesian_optuna', 'bayesian_skopt']:
-        try:
-            import optuna
-        except ImportError:
+        if importlib.util.find_spec("optuna") is None:
             print("Optuna not available, switching to grid search")
             opt_config.method = 'grid_search'
             opt_config.n_trials = 10
@@ -159,9 +157,12 @@ def example_3_bayesian_optimization():
     
     print("\n=== 示例3: 贝叶斯优化 ===")
     
+    if importlib.util.find_spec("optuna") is None:
+        print("需要安装optuna才能运行贝叶斯优化示例:")
+        print("pip install optuna")
+        return
+
     try:
-        import optuna
-        
         # 创建参数空间
         space = ParameterSpace()
         space.add_float('learning_rate', 1e-4, 1e-2, log=True)
@@ -194,9 +195,8 @@ def example_3_bayesian_optimization():
         else:
             print("优化失败，没有找到有效结果")
             
-    except ImportError:
-        print("需要安装optuna才能运行贝叶斯优化示例:")
-        print("pip install optuna")
+    except Exception as e:
+        print(f"贝叶斯优化示例运行失败: {e}")
 
 
 def example_4_compare_methods():
@@ -212,12 +212,8 @@ def example_4_compare_methods():
     
     methods = ['grid_search']
     
-    # 检查是否可以使用贝叶斯优化
-    try:
-        import optuna
+    if importlib.util.find_spec("optuna") is not None:
         methods.append('bayesian_optuna')
-    except ImportError:
-        pass
     
     results = {}
     

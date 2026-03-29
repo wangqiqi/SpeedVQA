@@ -4,7 +4,6 @@ SpeedVQA日志系统
 集成TensorBoard和Weights & Biases，实现检查点保存和恢复。
 """
 
-import os
 import logging
 import json
 from pathlib import Path

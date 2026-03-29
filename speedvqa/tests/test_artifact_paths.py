@@ -6,7 +6,6 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import pytest
 
 from speedvqa.utils.artifact_paths import (
     find_speedvqa_repo_root,

@@ -15,16 +15,14 @@ import numpy as np
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
-from unittest.mock import patch, MagicMock
-import time
+from typing import Dict, Any
 
 from hypothesis import given, strategies as st, settings, assume, note, HealthCheck
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
 
 from speedvqa.export.exporter import (
     ModelExporter, PerformanceBenchmarkResult, MemoryUsageResult, 
-    ConsistencyResult, ExportResult
+    ConsistencyResult
 )
 
 
@@ -162,9 +160,9 @@ class TestPerformanceBenchmarkProperties:
         # 验证文件存在
         assert model_path.exists(), "Model file should be created"
         
-        # 创建测试输入
-        test_inputs = exporter._create_test_inputs(batch_size)
-        
+        # 创建测试输入（校验工厂可调用）
+        _ = exporter._create_test_inputs(batch_size)
+
         # 模拟性能基准测试结果，避免实际加载模型
         # 这里我们测试基准测试逻辑的属性，而不是实际的模型推理
         

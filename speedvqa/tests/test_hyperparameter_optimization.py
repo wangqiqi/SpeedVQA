@@ -7,16 +7,11 @@
 测试超参数优化系统的正确性和有效性。
 """
 
-import os
-import json
 import time
-import tempfile
-import shutil
-from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any
 import pytest
 import numpy as np
-from hypothesis import given, strategies as st, settings, assume, example
+from hypothesis import given, strategies as st, settings, assume
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
 
 from speedvqa.engine.hyperparameter_optimizer import (
@@ -399,7 +394,7 @@ class TestConfigurationFromFile:
         
         # 检查参数类型正确
         assert space.parameters['learning_rate']['type'] == 'float'
-        assert space.parameters['learning_rate']['log'] == True
+        assert space.parameters['learning_rate']['log'] is True
         assert space.parameters['batch_size']['type'] == 'int'
         assert space.parameters['optimizer']['type'] == 'categorical'
         assert space.parameters['epochs']['type'] == 'fixed'
@@ -477,7 +472,7 @@ class HyperparameterOptimizationStateMachine(RuleBasedStateMachine):
                 result = optimizer.optimize(space, simple_objective_function)
                 if result:
                     self.results.append(result)
-            except Exception as e:
+            except Exception:
                 # 记录异常但不失败
                 pass
     

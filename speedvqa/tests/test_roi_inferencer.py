@@ -14,10 +14,9 @@ import numpy as np
 from PIL import Image
 import tempfile
 from pathlib import Path
-from typing import Dict, Any
 
 from speedvqa.inference import ROIInferencer
-from speedvqa.models.speedvqa import SpeedVQAModel, build_speedvqa_model
+from speedvqa.models.speedvqa import build_speedvqa_model
 from speedvqa.utils.config import get_default_config
 
 
@@ -519,9 +518,7 @@ class TestInferencePerformance:
         for img, q in zip(images, questions):
             result = inferencer.inference(img, q)
             single_times.append(result.inference_time_ms)
-        
-        total_single_time = sum(single_times)
-        
+
         # 批量推理时间
         results = inferencer.batch_inference(images, questions)
         total_batch_time = sum(r.inference_time_ms for r in results)

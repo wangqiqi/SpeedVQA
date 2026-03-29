@@ -16,6 +16,32 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — 文档（未发版 tag）
+
+### 变更
+
+- **计划**：**`plan.md`** 在保留算法评审摘要的基础上，增补 **可排期执行计划**：阶段划分（基线登记 / 轻量跨模态融合 / 可选 CLIP 对齐 / 整图上下文 backlog）、验收指标、任务清单、依赖、风险与回滚、建议周历与状态字段说明。
+
+---
+
+## [2026-03-29] — tag `1.0329.2231`
+
+### 新增
+
+- **CI**：**`.github/workflows/ci.yml`** — 推送/PR 至 `main`/`master` 时运行 **Ruff**（Python 3.11）与 **pytest**（3.10 / 3.12；`HYPOTHESIS_PROFILE=dev`，`HF_DATASETS_OFFLINE` / `TRANSFORMERS_OFFLINE`）。
+- **`requirements-ci.txt`**：CI 安装用依赖（省略 TensorRT、wandb 等环境相关包）。
+- **`.pre-commit-config.yaml`**：可选本地 **Ruff** 钩子（`--fix`）。
+
+### 变更
+
+- **`pyproject.toml`**：**`[project.optional-dependencies].dev`**（Ruff）；**`[tool.ruff]`** / **`[tool.ruff.lint]`**（E4、E7、E9、F；示例与部分测试脚本 **E402** 按文件忽略）。
+- **`README.md`**：「**开发与 CI**」— `pip install -e ".[dev]"`、`ruff check`、pre-commit、Actions 与 **`requirements-ci.txt`** 说明。
+- **`requirements.txt`**：补充 **`psutil`**（与导出/监控等用法一致）。
+- **`plan.md`**：**算法设计评审意见（2026-03-29）** 记录。
+- **源码与测试**：按 Ruff 清理**未使用导入**及若干小问题（**`speedvqa/engine`**、**`examples`**、**`export`**、**`inference`**、**`monitoring`**、**`optimization`**、**`benchmark`**、**`utils`**、**`speedvqa/tests/*`** 等）。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2325`
 
 ### 新增

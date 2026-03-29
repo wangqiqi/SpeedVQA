@@ -10,7 +10,6 @@ import logging
 from typing import Dict, List, Optional, Any
 from collections import deque
 import numpy as np
-import torch
 
 try:
     import pynvml

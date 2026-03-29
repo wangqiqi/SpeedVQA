@@ -6,7 +6,6 @@ Tests monitoring accuracy, real-time metric updates, and consistency.
 
 import pytest
 import time
-import numpy as np
 from hypothesis import given, strategies as st, settings, HealthCheck
 
 from speedvqa.monitoring.performance_monitor import PerformanceMonitor
@@ -219,13 +218,13 @@ class TestAllMetrics:
     def test_metrics_history_tracking(self, monitor):
         """Test that metrics history is tracked."""
         monitor.record_inference(10.0, batch_size=1)
-        metrics1 = monitor.get_all_metrics()
-        
+        assert monitor.get_all_metrics() is not None
+
         time.sleep(0.01)
-        
+
         monitor.record_inference(12.0, batch_size=1)
-        metrics2 = monitor.get_all_metrics()
-        
+        assert monitor.get_all_metrics() is not None
+
         history = monitor.get_metrics_history()
         assert len(history) == 2
         assert history[0]['timestamp'] <= history[1]['timestamp']

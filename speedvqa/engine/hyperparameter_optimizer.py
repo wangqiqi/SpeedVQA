@@ -4,20 +4,16 @@
 支持网格搜索和贝叶斯优化，实现参数空间定义和采样，支持多试验并行执行。
 """
 
-import os
 import json
 import time
 import logging
-import multiprocessing as mp
 from abc import ABC, abstractmethod
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple, Union, Callable
-from itertools import product
+from typing import Dict, List, Any, Optional, Callable
 
 import numpy as np
-import torch
 import yaml
 from sklearn.model_selection import ParameterGrid
 
@@ -353,7 +349,6 @@ class GridSearchOptimizer(BaseOptimizer):
     def _parallel_grid_search(self, param_grid):
         """并行网格搜索"""
         # 使用线程池而不是进程池，避免序列化问题
-        from concurrent.futures import ThreadPoolExecutor
         
         with ThreadPoolExecutor(max_workers=self.config.n_jobs) as executor:
             # 提交任务
@@ -592,7 +587,7 @@ class HyperparameterOptimizer:
         best_result = optimizer.optimize()
         
         if best_result:
-            self.logger.info(f"Optimization completed. Best result:")
+            self.logger.info("Optimization completed. Best result:")
             self.logger.info(f"  Parameters: {best_result.parameters}")
             self.logger.info(f"  Metric: {best_result.metrics}")
         else:

@@ -7,7 +7,6 @@ ROI推理器 (ROIInferencer)
 - 推理结果后处理
 """
 
-import os
 import time
 import torch
 import torch.nn.functional as F
@@ -17,7 +16,6 @@ from typing import Dict, List, Any, Optional, Tuple, Union
 from pathlib import Path
 from dataclasses import dataclass
 from PIL import Image
-import psutil
 
 try:
     import onnxruntime as ort
@@ -28,7 +26,7 @@ except ImportError:
 try:
     import tensorrt as trt
     import pycuda.driver as cuda
-    import pycuda.autoinit
+    import pycuda.autoinit  # noqa: F401
     TENSORRT_AVAILABLE = True
 except ImportError:
     TENSORRT_AVAILABLE = False
@@ -217,7 +215,7 @@ class ROIInferencer:
         model.to(self.device)
         model.eval()
         
-        self.logger.info(f"PyTorch model loaded successfully")
+        self.logger.info("PyTorch model loaded successfully")
         return model
     
     def _load_onnx_model(self, model_path: str) -> ort.InferenceSession:
@@ -234,7 +232,7 @@ class ROIInferencer:
         
         session = ort.InferenceSession(model_path, providers=providers)
         
-        self.logger.info(f"ONNX model loaded successfully")
+        self.logger.info("ONNX model loaded successfully")
         return session
     
     def _load_tensorrt_model(self, model_path: str) -> Any:
@@ -253,7 +251,7 @@ class ROIInferencer:
         runtime = trt.Runtime(trt_logger)
         engine = runtime.deserialize_cuda_engine(engine_data)
         
-        self.logger.info(f"TensorRT model loaded successfully")
+        self.logger.info("TensorRT model loaded successfully")
         return engine
     
     def inference(self, roi_image: Union[np.ndarray, Image.Image, str],
@@ -514,7 +512,7 @@ def build_roi_inferencer(model_path: str, model_format: str = 'pytorch',
     
     # 打印推理器信息
     info = inferencer.get_model_info()
-    print(f"\n=== ROI Inferencer Info ===")
+    print("\n=== ROI Inferencer Info ===")
     print(f"Model Path: {info['model_path']}")
     print(f"Model Format: {info['model_format']}")
     print(f"Device: {info['device']}")
@@ -525,7 +523,6 @@ def build_roi_inferencer(model_path: str, model_format: str = 'pytorch',
 
 if __name__ == '__main__':
     # 测试ROI推理器
-    import sys
     
     # 示例用法
     print("ROI Inferencer Module")

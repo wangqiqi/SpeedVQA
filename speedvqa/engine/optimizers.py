@@ -5,7 +5,6 @@ SpeedVQA优化器和调度器构建系统
 实现配置驱动的构建函数。
 """
 
-import torch
 import torch.optim as optim
 from torch.optim.lr_scheduler import (
     CosineAnnealingLR, 
@@ -15,8 +14,7 @@ from torch.optim.lr_scheduler import (
     ExponentialLR,
     MultiStepLR
 )
-from typing import Dict, Any, Optional, Union, List
-import math
+from typing import Dict, Any, Optional
 
 
 class OptimizerFactory:
@@ -401,7 +399,7 @@ if __name__ == '__main__':
     
     try:
         components = build_optimization_components(test_model.parameters(), full_config, 1000)
-        print(f"✓ Complete components built successfully")
+        print("✓ Complete components built successfully")
         print(f"  Optimizer: {components['optimizer_info']['type']}")
         print(f"  Scheduler: {components['scheduler_info']['type']}")
     except Exception as e:

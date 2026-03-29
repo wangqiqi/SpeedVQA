@@ -9,21 +9,19 @@
 - 报告生成
 """
 
-import os
-import time
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any
 import pytest
 import torch
 import torch.nn as nn
 import numpy as np
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from speedvqa.export.exporter import (
     ModelExporter, PerformanceBenchmarkResult, MemoryUsageResult, 
-    ConsistencyResult, ExportResult
+    ConsistencyResult
 )
 
 
@@ -485,11 +483,11 @@ class TestPerformanceBenchmarking:
         
         # 运行基准测试（会自动生成报告）
         model_paths = {'pytorch': str(save_path)}
-        benchmark_results = exporter.benchmark_exported_models(
+        exporter.benchmark_exported_models(
             model_paths,
             num_iterations=3,
             batch_sizes=[1, 2],
-            warmup_iterations=1
+            warmup_iterations=1,
         )
         
         # 验证报告目录被创建

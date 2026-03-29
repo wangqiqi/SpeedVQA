@@ -8,13 +8,11 @@
 import pytest
 import tempfile
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Any
 from hypothesis import given, strategies as st, settings, assume, HealthCheck
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
 
-from speedvqa.data.datasets import VQADataset, build_dataset
+from speedvqa.data.datasets import build_dataset
 from speedvqa.data.validators import DataValidator, XAnyLabelingAdapter
 from speedvqa.utils.config import create_minimal_config
 
@@ -145,7 +143,7 @@ class TestDataValidationConsistency:
                 assert sample1['question'] == sample2['question']
                 assert sample1['answer'] == sample2['answer']
                 
-        except Exception as e:
+        except Exception:
             # 如果数据集构建失败，验证器应该检测到错误
             assert not result1['is_valid'] or len(result1['errors']) > 0
     

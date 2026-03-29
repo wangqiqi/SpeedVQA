@@ -13,22 +13,20 @@
 5. Performance Consistency: 导出性能指标一致可靠
 """
 
-import os
 import time
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
 from unittest.mock import patch, MagicMock
 
-from hypothesis import given, strategies as st, settings, assume, example
+from hypothesis import given, strategies as st, settings, assume
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
 
-from speedvqa.export.exporter import ModelExporter, ExportResult, ValidationResult, export_model
+from speedvqa.export.exporter import ModelExporter, ValidationResult
 
 
 # 简化的测试模型，避免transformers依赖问题
@@ -52,7 +50,6 @@ class SimpleSpeedVQAModel(nn.Module):
         # 简化的文本编码器
         text_dim = config['text']['feature_dim']
         vocab_size = 30522
-        max_length = config['text']['max_length']
         self.text_encoder = nn.Sequential(
             nn.Embedding(vocab_size, text_dim),
             nn.AdaptiveAvgPool1d(1),
@@ -379,8 +376,8 @@ class TestModelExportConsistency:
                     pt_path = Path(temp_dir) / f'config_test_{format_name}.pt'
                     result = exporter.export_pytorch(model, str(pt_path))
                     
-                    assert result.success, f"PyTorch导出应该成功"
-                    assert result.format == 'pytorch', f"格式标识应该正确"
+                    assert result.success, "PyTorch导出应该成功"
+                    assert result.format == 'pytorch', "格式标识应该正确"
                     
                 elif format_name == 'onnx':
                     # 测试ONNX导出配置
@@ -400,7 +397,7 @@ class TestModelExportConsistency:
                         if mock_export.called:
                             call_kwargs = mock_export.call_args[1]
                             assert call_kwargs['opset_version'] == export_config['onnx']['opset_version'], \
-                                f"ONNX opset版本应该匹配配置"
+                                "ONNX opset版本应该匹配配置"
                             
                             # 验证动态轴配置
                             assert 'dynamic_axes' in call_kwargs, "应该设置动态轴"
@@ -840,8 +837,7 @@ class TestModelExportConsistency:
             
             for run in range(num_runs):
                 pt_path = Path(temp_dir) / f'performance_test_{run}.pt'
-                
-                start_time = time.time()
+
                 result = exporter.export_pytorch(model, str(pt_path))
                 
                 assert result.success, f"第{run}次导出失败: {result.error_message}"

@@ -13,11 +13,8 @@ from typing import Dict, Any
 from speedvqa.models.speedvqa import (
     VisionEncoder, 
     MultiModalFusion, 
-    MLPClassifier,
-    SpeedVQAModel,
-    build_speedvqa_model
+    MLPClassifier
 )
-from speedvqa.utils.config import create_minimal_config
 
 
 class MockTextEncoder(nn.Module):
@@ -27,8 +24,7 @@ class MockTextEncoder(nn.Module):
         super().__init__()
         vocab_size = 1000
         embed_dim = config.get('feature_dim', 768)
-        max_length = config.get('max_length', 128)
-        
+
         self.embedding = nn.Embedding(vocab_size, embed_dim)
         self.feature_dim = embed_dim
     

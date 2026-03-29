@@ -8,7 +8,6 @@ for efficient inference on NVIDIA GPUs (especially T4).
 import os
 import logging
 from typing import Optional, Tuple, Dict, Any
-import numpy as np
 import torch
 import torch.nn as nn
 

@@ -10,13 +10,11 @@ import tempfile
 import torch
 import torch.nn as nn
 from pathlib import Path
-from typing import Dict, List, Any
-from hypothesis import given, strategies as st, settings, assume
+from typing import Dict, Any
+from hypothesis import given, strategies as st, settings
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
 
 from speedvqa.engine.trainer import ConfigurableTrainer, EarlyStopping
-from speedvqa.models.speedvqa import SpeedVQAModel
-from speedvqa.utils.config import create_minimal_config
 
 
 class MockModel(nn.Module):
@@ -30,7 +28,8 @@ class MockModel(nn.Module):
     def forward(self, batch):
         # 模拟SpeedVQA模型的输出格式
         batch_size = batch['label'].size(0)
-        fake_features = torch.randn(batch_size, 100)
+        dev = batch['label'].device
+        fake_features = torch.randn(batch_size, 100, device=dev)
         logits = self.classifier(fake_features)
         
         return {
@@ -389,9 +388,9 @@ class TestTrainingMonitoringProperties:
         new_scheduler = new_trainer._create_scheduler(new_optimizer, 100)
         
         # 加载检查点
-        checkpoint = new_trainer.load_checkpoint(
+        new_trainer.load_checkpoint(
             str(trainer.save_dir / 'latest_checkpoint.pth'),
-            new_model, new_optimizer, new_scheduler
+            new_model, new_optimizer, new_scheduler,
         )
         
         # 验证状态恢复

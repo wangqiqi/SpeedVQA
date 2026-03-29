@@ -11,14 +11,11 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torch.cuda.amp import GradScaler, autocast
-from typing import Dict, Any, Optional, Tuple, List
-from pathlib import Path
+from typing import Dict, Any, Optional
 import logging
 from tqdm import tqdm
 
-from ..models.speedvqa import SpeedVQAModel
 from ..utils.artifact_paths import resolve_train_save_dir
-from ..utils.config import ConfigManager
 
 
 class EarlyStopping:
@@ -359,7 +356,7 @@ class ConfigurableTrainer:
         accuracy = correct / total
         
         # 计算详细指标
-        from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
+        from sklearn.metrics import precision_recall_fscore_support
         precision, recall, f1, _ = precision_recall_fscore_support(
             all_targets, all_predictions, average='weighted', zero_division=0
         )

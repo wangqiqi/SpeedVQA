@@ -30,6 +30,13 @@ python speedvqa/tests/test_model_factory.py
 python speedvqa/tests/test_model_basic.py
 ```
 
+## 开发与 CI
+
+- **可选开发依赖**：`pip install -e ".[dev]"`（含 **Ruff**）。
+- **静态检查**：`ruff check speedvqa`（规则见根目录 **`pyproject.toml`** 中 **`[tool.ruff]`**）。
+- **提交前钩子（可选）**：`pip install pre-commit && pre-commit install`，配置见 **`.pre-commit-config.yaml`**。
+- **GitHub Actions**：推送/PR 至 `main` 或 `master` 时运行 **Ruff** 与 **pytest**（Python 3.10 / 3.12）；CI 使用 **`requirements-ci.txt`**（省略 TensorRT、wandb 等环境相关包）。本地快速跑测试可设 `HYPOTHESIS_PROFILE=dev` 缩短 Hypothesis 用例。
+
 ## 许可
 
 本仓库采用 **项目自定义许可**，见根目录 **[LICENSE](LICENSE)**。要点如下（**不构成法律意见**，以 `LICENSE` 全文为准）：

@@ -7,7 +7,6 @@ Tests optimization effectiveness, speedup, and memory reduction.
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
 from hypothesis import given, strategies as st, settings, HealthCheck
 import tempfile
 import os
@@ -138,13 +137,13 @@ class TestTensorRTOptimizationProperties:
         optimizer = TensorRTOptimizer(simple_model)
         output_path = os.path.join(temp_dir, 'model.onnx')
         
-        result = optimizer.convert_to_onnx(
+        optimizer.convert_to_onnx(
             output_path,
             sample_input,
             input_names=['image_input', 'text_input'],
-            output_names=['vqa_output']
+            output_names=['vqa_output'],
         )
-        
+
         assert os.path.exists(output_path)
     
     def test_memory_estimation(self, simple_model):

@@ -8,7 +8,6 @@ import pytest
 import torch
 import numpy as np
 from PIL import Image
-from typing import Dict, Any
 
 from speedvqa.inference.inferencer import ImagePreprocessor, InferenceResult
 

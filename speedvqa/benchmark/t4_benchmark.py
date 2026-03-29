@@ -302,7 +302,7 @@ class T4Benchmark:
         
         # Log summary
         single_latency = results['single_inference']['mean_latency_ms']
-        self.logger.info(f"\n=== Benchmark Summary ===")
+        self.logger.info("\n=== Benchmark Summary ===")
         self.logger.info(f"Single inference latency: {single_latency:.2f}ms")
         self.logger.info(f"Target (<50ms): {'✓ PASS' if single_latency < 50 else '✗ FAIL'}")
         

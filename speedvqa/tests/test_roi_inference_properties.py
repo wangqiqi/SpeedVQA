@@ -12,12 +12,7 @@ import pytest
 import torch
 import numpy as np
 from PIL import Image
-import tempfile
-from pathlib import Path
-from typing import List, Tuple
 from hypothesis import given, strategies as st, settings, HealthCheck
-import time
-from unittest.mock import Mock, MagicMock, patch
 
 from speedvqa.inference.inferencer import ImagePreprocessor, InferenceResult
 from speedvqa.inference.visualizer import VisualizationResult
@@ -94,9 +89,9 @@ class MockROIInferencer:
         # 预处理图像
         if isinstance(roi_image, str):
             roi_image = Image.open(roi_image).convert('RGB')
-        
-        image_tensor = self.image_preprocessor.preprocess(roi_image)
-        
+
+        _ = self.image_preprocessor.preprocess(roi_image)
+
         # 模拟推理（生成随机但有效的结果）
         np.random.seed(hash((roi_image.tobytes() if isinstance(roi_image, Image.Image) else roi_image.tobytes(), question)) % (2**32))
         
@@ -592,7 +587,6 @@ class MockResultVisualizer:
     def visualize_inference_result(self, image, answer, confidence, question, 
                                    inference_time_ms, output_path=None):
         """模拟单个推理结果可视化"""
-        from speedvqa.inference.visualizer import VisualizationResult
         
         # 验证输入
         if not isinstance(image, (np.ndarray, Image.Image, str)):

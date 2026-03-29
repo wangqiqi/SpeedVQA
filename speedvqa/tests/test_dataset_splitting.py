@@ -8,11 +8,8 @@
 import pytest
 import tempfile
 import json
-import torch
 from pathlib import Path
-from typing import Dict, List, Tuple
 from hypothesis import given, strategies as st, settings, assume
-from torch.utils.data import Dataset
 
 from speedvqa.data.datasets import VQADataset, build_dataset, split_dataset
 from speedvqa.utils.config import create_minimal_config
@@ -276,9 +273,9 @@ class TestDatasetSplittingCorrectness:
         num_samples = 40
         dataset = self.create_test_dataset(num_samples)
         
-        # 获取原始类别分布
-        original_distribution = dataset.get_class_distribution()
-        
+        # 获取原始类别分布（划分前后均应有效）
+        assert dataset.get_class_distribution() is not None
+
         train_dataset, val_dataset, test_dataset = split_dataset(dataset)
         
         # 验证每个子集都有样本（如果原数据集足够大）

@@ -18,7 +18,6 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from speedvqa.export.exporter import ModelExporter, export_model
-from speedvqa.utils.config import get_default_config
 
 
 class MockSpeedVQAModel(nn.Module):
@@ -183,13 +182,11 @@ def demonstrate_pytorch_export():
 
 def demonstrate_onnx_export():
     """演示ONNX格式导出"""
+    import importlib.util
+
     print("\n=== ONNX Export Demo ===")
-    
-    try:
-        import onnx
-        import onnxruntime as ort
-        onnx_available = True
-    except ImportError:
+
+    if importlib.util.find_spec("onnx") is None or importlib.util.find_spec("onnxruntime") is None:
         print("❌ ONNX not available, skipping ONNX export demo")
         return
     

@@ -10,7 +10,6 @@ import tempfile
 import shutil
 from pathlib import Path
 from unittest.mock import patch, MagicMock
-import numpy as np
 import os
 
 # 禁用Hugging Face模型下载
@@ -18,8 +17,7 @@ os.environ['HF_DATASETS_OFFLINE'] = '1'
 os.environ['TRANSFORMERS_OFFLINE'] = '1'
 
 from speedvqa.export.exporter import ModelExporter, ExportResult, ValidationResult, export_model
-from speedvqa.models.speedvqa import SpeedVQAModel, build_speedvqa_model
-from speedvqa.utils.config import get_default_config
+from speedvqa.models.speedvqa import SpeedVQAModel
 
 
 class TestModelExporter:
@@ -322,7 +320,7 @@ class TestModelExporter:
         assert validation_result.error_message is not None
     
     @patch('speedvqa.export.exporter.ONNX_AVAILABLE', True)
-    @patch('onnxruntime.InferenceSession')
+    @patch('speedvqa.export.exporter.ort.InferenceSession')
     def test_validate_onnx_export(self, mock_session, exporter, model):
         """测试ONNX导出验证"""
         # 模拟ONNX Runtime会话
@@ -332,16 +330,19 @@ class TestModelExporter:
             MagicMock(name='input_ids'),
             MagicMock(name='attention_mask')
         ]
-        mock_session_instance.run.return_value = [np.random.randn(2, 2)]
         mock_session.return_value = mock_session_instance
-        
+
         # 创建测试输入
         test_inputs = {
             'image': torch.randn(2, 3, 224, 224),
             'input_ids': torch.randint(0, 1000, (2, 64)),
             'attention_mask': torch.ones(2, 64)
         }
-        
+
+        with torch.no_grad():
+            ref_logits = model(test_inputs)['logits'].cpu().numpy()
+        mock_session_instance.run.return_value = [ref_logits]
+
         validation_result = exporter._validate_onnx_export(
             model, 'fake_path.onnx', test_inputs
         )

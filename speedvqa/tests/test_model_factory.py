@@ -22,7 +22,6 @@ from speedvqa.models.factory import (
     get_model_presets,
     get_supported_components,
 )
-from speedvqa.utils.config import create_minimal_config
 
 
 def test_supported_components():

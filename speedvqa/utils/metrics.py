@@ -7,11 +7,11 @@ SpeedVQA训练指标计算系统
 
 import numpy as np
 import torch
-from typing import Dict, List, Any, Optional, Union, Tuple
+from typing import Dict, List, Any, Optional, Union
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     confusion_matrix, classification_report, roc_auc_score,
-    precision_recall_curve, roc_curve, average_precision_score
+    roc_curve, average_precision_score
 )
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -144,7 +144,7 @@ class MetricsCalculator:
                 auc_roc = roc_auc_score(targets, probabilities, multi_class='ovr', average='weighted')
                 metrics['auc_roc'] = auc_roc
         
-        except Exception as e:
+        except Exception:
             # AUC计算可能失败（例如只有一个类别）
             pass
         

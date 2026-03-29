@@ -5,21 +5,17 @@ SpeedVQA模型导出器
 包含导出模型功能验证和性能基准测试功能。
 """
 
-import os
 import time
 import torch
-import torch.nn as nn
 import numpy as np
 import psutil
-import gc
-from typing import Dict, Any, Optional, List, Tuple, Union
+from typing import Dict, Any, Optional, List, Tuple
 from pathlib import Path
 import logging
 from dataclasses import dataclass
 import json
 from collections import defaultdict
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # 可选依赖导入
 try:
@@ -32,8 +28,7 @@ except ImportError:
 
 try:
     import tensorrt as trt
-    import pycuda.driver as cuda
-    import pycuda.autoinit
+    import pycuda.autoinit  # noqa: F401  # 初始化 CUDA 上下文，供 TensorRT 使用
     TENSORRT_AVAILABLE = True
 except ImportError:
     TENSORRT_AVAILABLE = False
@@ -1117,13 +1112,7 @@ class ModelExporter:
         with torch.no_grad():
             for i in range(num_iterations):
                 iter_start = time.time()
-                
-                # 记录推理前内存
-                if torch.cuda.is_available():
-                    pre_memory = torch.cuda.memory_allocated() / 1024 / 1024
-                else:
-                    pre_memory = psutil.Process().memory_info().rss / 1024 / 1024
-                
+
                 # 推理
                 _ = model(inputs)
                 
@@ -1197,10 +1186,7 @@ class ModelExporter:
         
         for i in range(num_iterations):
             iter_start = time.time()
-            
-            # 记录推理前内存
-            pre_memory = psutil.Process().memory_info().rss / 1024 / 1024
-            
+
             # 推理
             _ = ort_session.run(None, ort_inputs)
             
@@ -1603,7 +1589,7 @@ def export_model(model: SpeedVQAModel, output_dir: str, model_name: str,
     results = exporter.export_all_formats(model, str(base_path), formats)
     
     # 打印导出结果摘要
-    print(f"\n=== Model Export Summary ===")
+    print("\n=== Model Export Summary ===")
     print(f"Output directory: {output_dir}")
     print(f"Model name: {model_name}")
     

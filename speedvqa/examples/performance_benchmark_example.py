@@ -11,7 +11,6 @@ import torch.nn as nn
 from pathlib import Path
 import tempfile
 import shutil
-import time
 import numpy as np
 
 import sys
@@ -20,8 +19,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from speedvqa.export.exporter import ModelExporter, export_model
-from speedvqa.utils.config import get_default_config
+from speedvqa.export.exporter import ModelExporter
 
 
 class MockSpeedVQAModel(nn.Module):
@@ -183,16 +181,16 @@ def demonstrate_basic_performance_benchmark():
                             
                             # 检查T4性能目标
                             if perf.avg_inference_time_ms < 50.0:
-                                print(f"    ✅ Meets T4 target (<50ms)")
+                                print("    ✅ Meets T4 target (<50ms)")
                             else:
-                                print(f"    ⚠️  Exceeds T4 target (>50ms)")
+                                print("    ⚠️  Exceeds T4 target (>50ms)")
                         else:
                             print(f"  {format_name.upper()}: Error - {perf.error_message}")
             
             # 显示建议
             recommendations = benchmark_results.get('recommendations', [])
             if recommendations:
-                print(f"\n=== Recommendations ===")
+                print("\n=== Recommendations ===")
                 for rec in recommendations:
                     print(f"  {rec}")
         
@@ -279,14 +277,14 @@ def demonstrate_comprehensive_benchmark():
             perf_comparison = benchmark_results.get('performance_comparison', {})
             
             if perf_comparison.get('overall_ranking'):
-                print(f"\n=== Overall Performance Ranking ===")
+                print("\n=== Overall Performance Ranking ===")
                 for i, (format_name, score) in enumerate(perf_comparison['overall_ranking']):
                     print(f"  {i+1}. {format_name.upper()} (score: {score:.2f})")
             
             # 显示批次大小分析
             batch_analysis = perf_comparison.get('batch_size_analysis', {})
             if batch_analysis:
-                print(f"\n=== Batch Size Analysis ===")
+                print("\n=== Batch Size Analysis ===")
                 for batch_size, analysis in batch_analysis.items():
                     print(f"\n  Batch Size {batch_size}:")
                     print(f"    Speed Ranking: {' > '.join(analysis['speed_ranking'])}")
@@ -302,7 +300,7 @@ def demonstrate_comprehensive_benchmark():
             # 显示一致性结果
             consistency_results = benchmark_results.get('consistency_results', {})
             if consistency_results:
-                print(f"\n=== Consistency Analysis ===")
+                print("\n=== Consistency Analysis ===")
                 for batch_key, batch_consistency in consistency_results.items():
                     batch_size = batch_key.split('_')[1]
                     print(f"\n  Batch Size {batch_size}:")
@@ -316,10 +314,10 @@ def demonstrate_comprehensive_benchmark():
                                   f"prediction_match={match_rate:.3f}")
                             
                             if score < 0.95:
-                                print(f"      ⚠️  Low consistency detected!")
+                                print("      ⚠️  Low consistency detected!")
             
             # 显示内存分析
-            print(f"\n=== Memory Usage Analysis ===")
+            print("\n=== Memory Usage Analysis ===")
             for batch_key, batch_results in benchmark_results.get('detailed_results', {}).items():
                 batch_size = batch_key.split('_')[1]
                 print(f"\n  Batch Size {batch_size}:")
@@ -334,8 +332,8 @@ def demonstrate_comprehensive_benchmark():
                         if memory.gpu_peak_memory_mb is not None:
                             print(f"      GPU: peak={memory.gpu_peak_memory_mb:.1f}MB")
             
-            print(f"\n✓ Comprehensive benchmark completed!")
-            print(f"  Detailed report saved to: ./benchmark_reports/")
+            print("\n✓ Comprehensive benchmark completed!")
+            print("  Detailed report saved to: ./benchmark_reports/")
         
         else:
             print("❌ No models were successfully exported")
@@ -429,10 +427,10 @@ def demonstrate_t4_performance_validation():
                 print(f"   (Largest batch size meeting <{target_time_ms}ms target)")
             else:
                 print(f"\n⚠️  No batch size meets T4 target (<{target_time_ms}ms)")
-                print(f"   Consider model optimization or hardware upgrade")
+                print("   Consider model optimization or hardware upgrade")
             
             # 内存效率分析
-            print(f"\n=== Memory Efficiency Analysis ===")
+            print("\n=== Memory Efficiency Analysis ===")
             for batch_key, batch_results in benchmark_results.get('detailed_results', {}).items():
                 batch_size = int(batch_key.split('_')[1])
                 
@@ -494,7 +492,7 @@ def demonstrate_memory_profiling():
         pt_result = exporter.export_pytorch(model, str(pt_path))
         
         if pt_result.success:
-            print(f"✓ Model exported for memory profiling")
+            print("✓ Model exported for memory profiling")
             
             # 运行内存分析
             model_paths = {'pytorch': str(pt_path)}
@@ -508,7 +506,7 @@ def demonstrate_memory_profiling():
             )
             
             # 分析内存使用模式
-            print(f"\n=== Memory Usage Patterns ===")
+            print("\n=== Memory Usage Patterns ===")
             
             memory_data = []
             for batch_key, batch_results in benchmark_results.get('detailed_results', {}).items():
@@ -541,12 +539,11 @@ def demonstrate_memory_profiling():
             
             # 内存缩放分析
             if len(memory_data) >= 2:
-                print(f"\n=== Memory Scaling Analysis ===")
+                print("\n=== Memory Scaling Analysis ===")
                 
                 # 计算内存与批次大小的关系
                 batch_sizes = [d['batch_size'] for d in memory_data]
-                peak_memories = [d['peak_memory'] for d in memory_data]
-                
+
                 # 简单线性拟合
                 if len(batch_sizes) >= 2:
                     # 计算每个样本的内存开销

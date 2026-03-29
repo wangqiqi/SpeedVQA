@@ -9,6 +9,11 @@ description = "Lightweight binary VQA (ROI + text) with training, export, and in
 readme = "README.md"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+]
+
 [project.scripts]
 speedvqa-train = "speedvqa.cli.onekey_train:main"
 speedvqa-predict = "speedvqa.cli.onekey_predict:main"
@@ -42,3 +47,24 @@ markers = [
     "unit: 标记为单元测试",
     "property: 标记为属性测试",
 ]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+# 先聚焦未使用导入/变量、语法与 import 顺序；全量 W29* 空白规则噪声大，可由后续 ruff format 统一
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",
+]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+# 在调整 sys.path 之后再导入项目包
+"speedvqa/examples/*.py" = ["E402"]
+"speedvqa/tests/run_tests.py" = ["E402"]
+"speedvqa/tests/test_model_basic.py" = ["E402"]
+"speedvqa/tests/test_model_factory.py" = ["E402"]
