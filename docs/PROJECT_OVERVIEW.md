@@ -70,6 +70,25 @@ SpeedVQA/
 
 公开 API 入口以 **`speedvqa/__init__.py`** 的 `__all__` 为准（数据集、配置、模型构建等）；训练与推理更多通过 **engine / inference / export** 子模块或 **`speedvqa/examples/`** 演示。
 
+### 推荐导入（与顶层 API 的分工）
+
+| 用途 | 推荐方式 |
+|------|----------|
+| 数据集、标注校验、加载 YAML、从配置构建模型 | `from speedvqa import ...` 或显式 `speedvqa.data` / `speedvqa.utils.config` / `speedvqa.models` |
+| 训练与优化器、调度、超参搜索 | `from speedvqa.engine import train, ConfigurableTrainer` 等（见 `speedvqa/engine/__init__.py`） |
+| 多格式导出 | `speedvqa.export`（说明见 `speedvqa/export/README.md`） |
+| ROI 推理（PyTorch / ONNX / TensorRT） | `speedvqa.inference`（说明见 `speedvqa/inference/README.md`） |
+| 命令行一键流程 | `python -m speedvqa.scripts.onekey_train`（及 `onekey_predict`、`onekey_export`） |
+
+### 扩展新的视觉骨干 / 文本编码器（维护路径）
+
+1. 在 **`speedvqa/models/speedvqa.py`**（或与之配套的编码器实现）中增加具体网络与配置分支。  
+2. 在 **`speedvqa/models/factory.py`** 中更新对应的 **`SUPPORTED_*`** 字典与 **`_validate_*`** 逻辑，保证配置与实现一致。  
+3. 在 **`speedvqa/configs/default.yaml`**（或示例 YAML）中补充可选键值说明，便于使用者复制修改。  
+4. 在 **`speedvqa/tests/`** 中为工厂与新配置路径补充或扩展测试。
+
+安装 **`pip install`** 生成的 wheel 时，**不包含** `speedvqa.tests` 与 `speedvqa.examples`（见根目录 **`pyproject.toml`** 的 `exclude`）；克隆源码仓库开发时二者仍完整可用。
+
 ---
 
 ## 配置与数据要点
@@ -101,7 +120,7 @@ SpeedVQA/
 | `speedvqa/export/README.md` | 多格式导出与配置项说明 |
 | `speedvqa/examples/*.py` | 导出、性能基准、超参数优化等可运行示例 |
 | `speedvqa/scripts/` | 一键 Python 入口：`python -m speedvqa.scripts.onekey_train` 等 |
-| `scripts/`（仓库根） | `onekey_*.sh`：在仓库根调用上述模块 |
+| `scripts/`（仓库根） | `onekey_*.sh`：在仓库根调用上述模块；**`onekey_clean.sh`** 清理 `runs/`、缓存与 `__pycache__` 等 |
 | `requirements.txt` | Python 依赖版本约束 |
 
 ---

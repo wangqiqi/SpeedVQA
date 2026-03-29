@@ -11,7 +11,9 @@ requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["speedvqa"]
+include = ["speedvqa*"]
+# 发布 wheel 时不打包示例与测试；开发克隆仓库后仍可通过源码树使用二者
+exclude = ["speedvqa.tests*", "speedvqa.examples*"]
 
 [tool.setuptools.package-data]
 speedvqa = ["configs/*.yaml"]

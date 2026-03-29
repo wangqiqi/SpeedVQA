@@ -11,9 +11,22 @@ SpeedVQA: 极速视觉问答系统
 - TensorRT优化，T4显卡<50ms推理
 - 模块化设计，易于扩展
 
+公开 API（本模块 ``__all__``）:
+    顶层 ``import speedvqa`` 仅导出 **数据、校验、配置、模型工厂**，便于轻量依赖与快速搭数据集/建模型。
+
+推荐按子模块导入（训练 / 导出 / 推理）:
+    - 训练: ``speedvqa.engine`` — 如 ``from speedvqa.engine import train, ConfigurableTrainer``
+    - 超参: ``speedvqa.engine.hyperparameter_optimizer`` 等
+    - 导出: ``speedvqa.export`` — 如 ``ModelExporter``（见 ``speedvqa/export/README.md``）
+    - 推理: ``speedvqa.inference`` — 如 ``ROIInferencer``（见 ``speedvqa/inference/README.md``）
+    - 一键 CLI: ``python -m speedvqa.scripts.onekey_train``（及 predict / export）
+
+可运行示例与 pytest 用例位于仓库内 ``speedvqa/examples/``、``speedvqa/tests/``（发布 wheel 中不包含二者，见根目录 ``pyproject.toml``）。
+
 使用示例:
-    from speedvqa.utils.config import load_config
+    from speedvqa import load_config, build_model
     cfg = load_config()  # 默认 speedvqa/configs/default.yaml
+    model = build_model(cfg)
 """
 
 __version__ = '1.0.0'

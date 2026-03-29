@@ -1,5 +1,28 @@
 # Changelog
 
+## [2026-03-29]
+
+### 新增
+
+- 根目录 **`scripts/onekey_clean.sh`**：清理 **`runs/`**、**`exports/`**、**`cache/`**、**`.pytest_cache`** / **`.hypothesis`**、**`build`** / **`dist`**、**`*.egg-info`**、`speedvqa` 与 **`scripts/`** 下 **`__pycache__`** 等；支持 **`--dry-run`**；不删除 **`.venv` / `venv`**。
+
+### 变更
+
+- **`.gitignore`**：补充 **`exports/`**、**`cache/`**、**`.mypy_cache/`**、**`.ruff_cache/`**、**`.tox/`**、**`coverage.xml`**。
+- **`README.md`**、**`docs/PROJECT_OVERVIEW.md`**、**`docs/RUNS_DIRECTORY.md`**：说明 **`onekey_clean.sh`** 用法。
+
+---
+
+## [2026-03-29] — tag `docs-speedvqa-api-packaging`
+
+### 变更
+
+- **`pyproject.toml`**：`setuptools.packages.find` 使用 `include = ["speedvqa*"]`，并 **`exclude`** **`speedvqa.tests*`**、**`speedvqa.examples*`**，使发布 wheel 更精简（开发仍用源码树跑测试与示例）。
+- **`speedvqa/__init__.py`**：模块文档串补充 **顶层 `__all__` 分工**、**训练/导出/推理/一键脚本** 的推荐导入与示例。
+- **`docs/PROJECT_OVERVIEW.md`**：新增 **推荐导入** 表与 **扩展新骨干/编码器** 四步说明，并与 wheel 排除策略对齐。
+
+---
+
 ## [2026-03-29] — tag `chore-speedvqa-monolithic-tree`
 
 ### 变更
