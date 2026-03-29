@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/__init__.py
-# hypothesis_version: 6.151.4
-
-['1.0.0', 'ConfigManager', 'DataValidator', 'SpeedVQA Team', 'VQADataset', 'XAnyLabelingAdapter', 'build_dataset', 'load_config', 'split_dataset']

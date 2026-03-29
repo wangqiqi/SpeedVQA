@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/data/validators.py
-# hypothesis_version: 6.151.4
-
-[128, '*.json', ',', '0', '1', 'NO', 'YES', 'annotations', 'answer', 'answer_mapping', 'bbox', 'data', 'default', 'encoder', 'errors', 'false', 'format_errors', 'has_images', 'has_json_annotations', 'has_jsonl', 'has_questions_txt', 'height', 'image', 'imagePath', 'image_path', 'images', 'is_valid', 'max_length', 'metadata', 'model', 'n', 'negative', 'no', 'positive', 'quality_warnings', 'question', 'questions.txt', 'r', 'source', 'statistics', 'structure_errors', 'text', 'total_samples', 'true', 'unknown', 'utf-8', 'vqaData', 'vqa_labels.jsonl', 'w', 'warnings', 'width', 'y', 'yes', '不存在', '不对', '不是', '否', '存在', '对', '是', '有', '正确', '没有', '错误']

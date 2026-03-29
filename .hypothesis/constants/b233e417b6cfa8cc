@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/run_tests.py
-# hypothesis_version: 6.151.4
-
-[224, 2000, '\n=== 测试数据验证器 ===', '\n=== 运行属性测试 ===', '.', '0', '1', '1.0', '=', '=== 测试答案标准化功能 ===', 'Is there a car?', 'NO', 'SpeedVQA 数据处理组件测试', 'YES', '__main__', 'annotations', 'errors', 'false', 'imageHeight', 'imagePath', 'imageWidth', 'images', 'no', 'test.jpg', 'test.json', 'true', 'utf-8', 'version', 'vqaData', 'w', 'yes', '✓', '✓ 答案标准化一致性属性测试通过', '✗', '❌ 部分测试失败，请检查实现。', '不存在', '不对', '否', '图片中有人吗？', '存在', '对', '是', '有', '正确', '没有', '错误', '🎉 所有测试通过！数据处理组件工作正常。']

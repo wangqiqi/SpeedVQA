@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/engine/optimizers.py
-# hypothesis_version: 6.151.4
-
-[0.0, 1e-10, 1e-08, 1e-06, 0.0001, 0.0005, 0.001, 0.01, 0.1, 0.5, 0.9, 0.95, 0.99, 0.999, 100, 1000, 'None', 'T_0', 'T_max', 'T_mult', '__main__', 'adagrad', 'adam', 'adamw', 'alpha', 'amsgrad', 'base_lrs', 'betas', 'centered', 'cosine', 'cosine_warm_restarts', 'current_epoch', 'dampening', 'enabled', 'epochs', 'eps', 'eta_min', 'exponential', 'factor', 'gamma', 'lr', 'lr_decay', 'main_scheduler', 'milestones', 'min', 'min_lr', 'mode', 'momentum', 'multistep', 'nesterov', 'none', 'optimizer', 'optimizer_info', 'param_groups', 'params', 'patience', 'plateau', 'rmsprop', 'scheduler', 'scheduler_info', 'sgd', 'start_lr', 'step', 'step_size', 'threshold', 'total_params', 'type', 'warmup', 'weight_decay']

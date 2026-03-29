@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/engine/__init__.py
-# hypothesis_version: 6.151.4
-
-['ConfigurableTrainer', 'OptimizationBuilder', 'OptimizerFactory', 'SchedulerFactory', 'build_optimizer', 'build_scheduler', 'train']

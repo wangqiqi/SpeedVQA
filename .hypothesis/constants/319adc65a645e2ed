@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/models/factory.py
-# hypothesis_version: 6.151.4
-
-[0.1, 0.2, 0.3, 128, 256, 512, 768, 1024, 1280, 1792, 'Attention Fusion', 'BERT Base Uncased', 'Bilinear Fusion', 'Concatenation Fusion', 'GELU', 'MobileNetV3-Large', 'MobileNetV3-Small', 'ReLU', 'ResNet50', 'Swish/SiLU', '__main__', 'activation', 'activations', 'attention', 'backbone', 'base', 'bert-base-uncased', 'bilinear', 'classifier', 'concat', 'config', 'cpu', 'dropout', 'encoder', 'feature_dim', 'freeze_encoder', 'fusion', 'fusion_methods', 'gelu', 'hidden_dim', 'hidden_dims', 'large', 'max_length', 'method', 'mobilenet_v3_large', 'mobilenet_v3_small', 'model', 'model_info', 'model_state_dict', 'name', 'num_classes', 'pretrained', 'relu', 'resnet50', 'small', 'speedvqa_base', 'speedvqa_large', 'speedvqa_small', 'state_dict', 'swish', 'text', 'text_encoders', 'use_layer_norm', 'vision', 'vision_backbones']

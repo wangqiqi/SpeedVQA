@@ -131,7 +131,6 @@ tb_logs/
 .coverage
 htmlcov/
 .pytest_cache/
-.hypothesis/
 
 # Documentation
 docs/_build/
@@ -161,9 +160,8 @@ __pycache__/
 .hypothesis/
 hypothesis_examples/
 
-# Kiro IDE
-.kiro/settings/
-.kiro/cache/
+# Kiro IDE / specs (do not track)
+.kiro/
 
 # Temporary directories
 .tmp/
@@ -238,3 +236,4 @@ runs/
 /*.onnx
 /*.engine
 /*.zip
+

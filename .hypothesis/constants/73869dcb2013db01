@@ -1,4 +1,0 @@
-# file: /home/jwzhou/workspace/SpeedVQA/speedvqa/models/speedvqa.py
-# hypothesis_version: 6.151.4
-
-[0.1, 0.2, 0.3, 128, 224, 256, 512, 576, 768, 960, 1000, 1024, 1792, 2048, '__main__', 'activation', 'attention', 'attention_mask', 'backbone', 'bilinear', 'classifier', 'concat', 'confidence', 'dropout', 'encoder', 'feature_dim', 'freeze_encoder', 'fused_features', 'fusion', 'fusion_method', 'gelu', 'hidden_dim', 'hidden_dims', 'image', 'input_dim', 'input_ids', 'last_hidden_state', 'logits', 'max_length', 'method', 'mobilenet', 'mobilenet_v3_large', 'mobilenet_v3_small', 'model', 'model_name', 'name', 'num_classes', 'predictions', 'pretrained', 'probabilities', 'relu', 'resnet', 'resnet50', 'speedvqa', 'swish', 'text', 'text_dim', 'text_encoder', 'text_features', 'total_parameters', 'trainable_parameters', 'unknown', 'use_layer_norm', 'vision', 'vision_backbone', 'vision_dim', 'vision_features']
