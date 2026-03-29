@@ -2,4 +2,4 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-exec python3 "$ROOT/scripts/onekey_predict.py" "$@"
+exec python3 -m speedvqa.scripts.onekey_predict "$@"

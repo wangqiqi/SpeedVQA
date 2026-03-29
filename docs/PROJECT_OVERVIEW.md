@@ -58,9 +58,9 @@ SpeedVQA/
 │   ├── optimization/
 │   ├── benchmark/
 │   ├── monitoring/
-│   ├── scripts/          # 占位说明（见 __init__.py）
+│   ├── scripts/          # 一键 CLI：onekey_train / predict / export（见 __init__.py）
 │   └── utils/
-├── scripts/              # 仓库根：一键训练/推理/导出（onekey_*.sh）
+├── scripts/              # 仓库根：onekey_*.sh 包装器（调用 speedvqa.scripts.onekey_*）
 ├── docs/
 ├── pyproject.toml        # 根目录 pytest 配置（testpaths = speedvqa/tests）
 └── runs/                 # 输出（通常 .gitignore）
@@ -98,7 +98,8 @@ SpeedVQA/
 | `speedvqa/inference/README.md` | ROI 推理 API、批推理与参数说明 |
 | `speedvqa/export/README.md` | 多格式导出与配置项说明 |
 | `speedvqa/examples/*.py` | 导出、性能基准、超参数优化等可运行示例 |
-| `scripts/`（仓库根） | 一键训练/推理/导出：`onekey_*.sh` |
+| `speedvqa/scripts/` | 一键 Python 入口：`python -m speedvqa.scripts.onekey_train` 等 |
+| `scripts/`（仓库根） | `onekey_*.sh`：在仓库根调用上述模块 |
 | `requirements.txt` | Python 依赖版本约束 |
 
 ---

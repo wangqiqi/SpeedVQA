@@ -20,7 +20,7 @@ cd /path/to/SpeedVQA
 pip install -r requirements.txt
 ```
 
-配置见 `speedvqa/configs/default.yaml`；示例在 `speedvqa/examples/`；一键训练/推理/导出见 `scripts/`（`onekey_train.sh` 等）。测试：在仓库根目录执行 `pytest`（配置见根目录 `pyproject.toml` 与 `speedvqa/pytest.ini`），或：
+配置见 `speedvqa/configs/default.yaml`；示例在 `speedvqa/examples/`；一键流程：仓库根 `scripts/onekey_*.sh`，或 `python -m speedvqa.scripts.onekey_train` 等。测试：在仓库根执行 `pytest`（见根目录 `pyproject.toml` 与 `speedvqa/pytest.ini`），或：
 
 ```bash
 python speedvqa/tests/run_tests.py
