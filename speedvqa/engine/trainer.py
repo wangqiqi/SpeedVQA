@@ -109,7 +109,7 @@ class ConfigurableTrainer:
         self.logger.info(f"Gradient accumulation steps: {self.gradient_accumulation_steps}")
         if getattr(self, '_save_dir_coerced', False):
             self.logger.info(
-                "训练检查点目录已从 save_dir=%r 规范到 %s（产物应在 runs/ 下，见 docs/03_使用.md）",
+                "训练检查点目录已从 save_dir=%r 规范到 %s（产物应在 runs/ 下，见 docs/02_使用.md）",
                 _raw_save,
                 self.save_dir,
             )

@@ -11,7 +11,7 @@
 | 资源 | 说明 |
 |------|------|
 | [01 设计](docs/01_设计.md) | 定位、特性、目录结构、工作流、扩展骨干 |
-| [03 使用](docs/03_使用.md) | 全栈流程：环境、数据、训练、导出、部署与 `runs/` 约定 |
+| [02 使用](docs/02_使用.md) | 全栈流程：环境、数据、训练、导出、部署与 `runs/` 约定 |
 | [推理模块](speedvqa/inference/README.md) | `ROIInferencer` API |
 | [导出模块](speedvqa/export/README.md) | `ModelExporter` 与格式说明 |
 
