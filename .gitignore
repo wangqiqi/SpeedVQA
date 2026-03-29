@@ -230,6 +230,16 @@ hyperopt_results_*/
 # 所有训练、导出、推理输出统一放在 runs/ 目录
 runs/
 
+# 一键导出默认目录、数据缓存（与 speedvqa/configs/default.yaml 等一致）
+exports/
+cache/
+
+# 类型检查 / 格式化 / 多环境工具缓存
+.mypy_cache/
+.ruff_cache/
+.tox/
+coverage.xml
+
 # 防止任何大型二进制文件意外提交到根目录
 /*.pt
 /*.pth
