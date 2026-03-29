@@ -13,7 +13,7 @@ for arg in "$@"; do
     --dry-run|-n) DRY_RUN=1 ;;
     -h|--help)
       cat <<'EOF'
-清理 runs/、导出目录、测试缓存、Python 缓存等（见脚本内列表）。
+清理 runs/、导出目录、基准/图表输出、测试缓存、Python 缓存等（见脚本内列表）。
 
   ./scripts/onekey_clean.sh           # 执行删除
   ./scripts/onekey_clean.sh --dry-run # 仅打印将删除的路径
@@ -39,8 +39,21 @@ shopt -s nullglob
 # —— 仓库根目录下的约定目录（与 default.yaml / onekey_export 等一致）——
 for name in runs exports cache test_runs test_outputs test_data \
   .pytest_cache .hypothesis build dist htmlcov .mypy_cache .ruff_cache .tox \
-  mlruns tb_logs benchmark_reports performance_reports; do
+  mlruns tb_logs benchmark_reports performance_reports \
+  visualizations plots inference_outputs predictions \
+  model_exports exported_models; do
   rm_path "$ROOT/$name"
+done
+
+# 仓库根目录下的图表/动图（多为 exporter / benchmark 生成，.gitignore 已忽略）
+for f in "$ROOT"/*.png "$ROOT"/*.jpg "$ROOT"/*.jpeg "$ROOT"/*.gif; do
+  [[ -f "$f" ]] || continue
+  rm_path "$f"
+done
+
+# 根目录 results_* 目录（与 .gitignore results_*/ 一致）
+for d in "$ROOT"/results_*; do
+  [[ -d "$d" ]] && rm_path "$d"
 done
 
 for d in "$ROOT"/hyperopt_results_*; do

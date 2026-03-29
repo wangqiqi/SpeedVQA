@@ -16,6 +16,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2148`
+
+### 变更
+
+- **`scripts/onekey_clean.sh`**：一并清理 **`visualizations/`**、**`plots/`**、**`inference_outputs/`**、**`predictions/`**、**`model_exports/`**、**`exported_models/`**；删除仓库根目录下的 **`*.png` / `*.jpg` / `*.jpeg` / `*.gif`**（多为 benchmark/导出图表）；删除根目录 **`results_*`** 子目录。已执行清理命令（当前工作区若无对应路径则无输出）。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2141`
 
 ### 新增
