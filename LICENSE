@@ -1,0 +1,58 @@
+SpeedVQA 软件许可协议
+SpeedVQA Software License Agreement
+
+版权所有 (c) 2026 SpeedVQA 项目权利人。保留所有权利。
+Copyright (c) 2026 SpeedVQA Project Rights Holders. All rights reserved.
+
+本文件不构成法律意见；使用本软件前请自行咨询法律顾问。
+This document is not legal advice; consult qualified counsel before use.
+
+──────────────────────────────────────────────────────────────────────────────
+
+一、许可范围（中文）
+
+1. 研究与学习用途  
+   在遵守本协议全部条款的前提下，您可以在**非商业**场景下免费使用本软件，包括但不限于：学术研究、课堂教学、个人自学、技术评估与概念验证。此类使用不得用于直接或间接营利。
+
+2. 商业用途（商用收费）  
+   任何**商业使用**均须事先取得权利人**书面许可**并**支付许可费用**。商业使用包括但不限于：将本软件或其衍生成果用于对外提供的产品或服务、内部营利性业务系统、SaaS、托管推理服务、向第三方交付的解决方案等。  
+   **未取得书面商业许可的，不得进行商业使用。**
+
+3. Fork 与修改（衍生作品须开源）  
+   若您对仓库进行 **Fork、修改、合并或以其他方式形成衍生作品**（以下统称「衍生作品」），您必须：  
+   (a) 将衍生作品的**完整对应源代码**以公众可访问的方式持续公开；且  
+   (b) 为衍生作品选择并适用 **OSI（Open Source Initiative）所认可的开源许可证**（例如 MIT、Apache-2.0、GPL-3.0 等），并向接收者提供该许可证全文；且  
+   (c) 清晰标注相对本项目的修改说明，并保留本软件原有的版权声明及本许可协议中与您义务相关的条款的可见副本。  
+
+   若衍生作品同时用于商业用途，仍须满足上文第 2 条的商业许可与付费要求。
+
+4. 禁止行为  
+   - 在未满足第 2 条的情况下将本软件用于商业目的。  
+   - 删除、隐匿或篡改本软件中的版权声明、许可标识或作者归属信息。  
+   - 以违反适用法律的方式使用本软件。
+
+5. 第三方组件  
+   本软件可能依赖第三方开源库；第三方组件受其各自许可证约束，不因本协议而变更。
+
+6. 免责声明  
+   本软件按「现状」提供，不提供任何明示或暗示的保证，包括但不限于适销性、特定用途适用性及不侵权。在任何情况下，权利人对因使用或无法使用本软件而产生的任何直接、间接、附带或后果性损害不承担责任，但依法不得排除或限制的责任除外。
+
+7. 协议变更与终止  
+   权利人可发布修订版许可；您继续使用即视为接受修订（另有声明除外）。若您违反本协议，相关授权自动终止。
+
+8. 适用法律与争议解决  
+   因本协议引起的争议，适用中华人民共和国法律（仅为法律选择；不含冲突法规则），并提交权利人主要办事机构所在地有管辖权的人民法院诉讼解决，除非双方另有书面约定。
+
+──────────────────────────────────────────────────────────────────────────────
+
+II. Scope (English summary)
+
+1. **Non-commercial research & learning**: Free use permitted, subject to this Agreement, for non-profit research, education, and personal study only.
+
+2. **Commercial use**: **Prohibited without prior written authorization and payment** of applicable license fees to the rights holders.
+
+3. **Forks and modifications**: Any derivative work must be **released with full corresponding source code** under an **OSI-approved open source license**, with clear notice of changes and retention of required copyright notices.
+
+4. **No warranty**: Provided “AS IS”; limitations of liability apply to the extent permitted by law.
+
+For commercial licensing or permissions, contact the repository owner or designated representative listed in the project README.

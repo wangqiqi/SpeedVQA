@@ -201,8 +201,15 @@ class ROIInferencer:
         # 导入模型类
         from ..models.speedvqa import SpeedVQAModel
         
-        # 重建模型
-        model_config = checkpoint.get('model_config', {})
+        # 重建模型（兼容训练检查点中的 config['model'] 与旧版 model_config）
+        model_config = checkpoint.get('model_config')
+        if not model_config:
+            full_cfg = checkpoint.get('config') or {}
+            model_config = full_cfg.get('model', {})
+        if not model_config:
+            raise ValueError(
+                "Checkpoint must contain 'model_config' or 'config' with a 'model' section"
+            )
         model = SpeedVQAModel(model_config)
         
         # 加载权重

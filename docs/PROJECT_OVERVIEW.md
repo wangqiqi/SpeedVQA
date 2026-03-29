@@ -1,0 +1,112 @@
+# SpeedVQA 项目介绍
+
+SpeedVQA 是一套面向 **ROI（感兴趣区域）图像 + 自然语言问题** 的 **二分类视觉问答（VQA）** 方案：针对「是 / 否」类问题输出 YES/NO（及置信度），强调 **配置驱动、模块化** 与在 **NVIDIA T4** 等 GPU 上的 **低延迟推理**（目标含毫秒级场景，具体以实测为准）。
+
+包版本见 `speedvqa/__init__.py` 中的 `__version__`（当前为 `1.0.0`）。
+
+---
+
+## 定位与适用场景
+
+- **输入**：裁剪后的 ROI 图像（如检测/跟踪后的目标贴图）+ 英文或中文短问句（配置中可对答案做中英文归一化）。
+- **输出**：二分类结果（正例 / 负例）及概率类信息；推理模块提供耗时统计，便于压测与部署评估。
+- **标注数据**：优先兼容 **X-AnyLabeling** 导出格式（单图 JSON、`annotations/*.json`、或 `vqa_labels.jsonl` 等，见数据模块实现）。
+
+不适用于开放域、多答案生成式 VQA；本项目聚焦 **轻量多模态分类 + 工程化训练/导出/推理链路**。
+
+---
+
+## 核心特性
+
+| 方向 | 说明 |
+|------|------|
+| 模型 | 默认 **MobileNetV3** 视觉编码 + **DistilBERT** 文本编码 + 融合与 **MLP 分类头**；支持通过配置切换骨干（如 `resnet50` 等）。 |
+| 配置 | **`speedvqa/configs/default.yaml`** 集中管理模型、数据、训练、导出等，减少硬编码。 |
+| 数据 | `VQADataset` 与校验/适配逻辑支持 X-AnyLabeling 与多种落盘格式；答案可映射到统一二分类标签。 |
+| 推理 | **`ROIInferencer`** 支持 PyTorch / ONNX / TensorRT，统一预处理与批推理接口（详见 `speedvqa/inference/README.md`）。 |
+| 导出 | **`ModelExporter`** 支持 PyTorch、ONNX、TensorRT 导出与验证流程（详见 `speedvqa/export/README.md`）。 |
+| 训练 | **`ConfigurableTrainer`**（`speedvqa/engine/trainer.py`）与优化器、指标、日志等配套；可选超参搜索（`hyperparameter_optimizer`）。 |
+| 性能 | 提供 **T4 基准**、性能监控、TensorRT 相关优化模块及 **`speedvqa/examples/`** 下的压测与导出示例。 |
+
+---
+
+## 技术栈（摘要）
+
+- **深度学习**：PyTorch、TorchVision、Hugging Face `transformers`（DistilBERT/BERT 等）。
+- **图像**：Pillow、OpenCV。
+- **工程**：PyYAML、NumPy/Pandas；测试使用 **pytest**（含 Hypothesis 属性测试）。
+- **可选加速**：ONNX / ONNX Runtime、**TensorRT**（导出与部署路径，依赖环境与驱动）。
+
+完整依赖见仓库根目录 **`requirements.txt`**。
+
+---
+
+## 仓库与包结构（概览）
+
+```
+SpeedVQA/
+├── speedvqa/             # 主 Python 包
+│   ├── configs/          # 默认与实验 YAML（default.yaml、hyperopt 等）
+│   ├── examples/         # 导出、压测、超参等示例脚本
+│   ├── tests/            # pytest 与独立自测脚本（conftest.py、run_tests.py 等）
+│   ├── pytest.ini        # 在 speedvqa/ 目录下: pytest -c pytest.ini
+│   ├── data/
+│   ├── models/
+│   ├── engine/
+│   ├── inference/
+│   ├── export/
+│   ├── optimization/
+│   ├── benchmark/
+│   ├── monitoring/
+│   ├── scripts/          # 占位说明（见 __init__.py）
+│   └── utils/
+├── scripts/              # 仓库根：一键训练/推理/导出（onekey_*.sh）
+├── docs/
+├── pyproject.toml        # 根目录 pytest 配置（testpaths = speedvqa/tests）
+└── runs/                 # 输出（通常 .gitignore）
+```
+
+公开 API 入口以 **`speedvqa/__init__.py`** 的 `__all__` 为准（数据集、配置、模型构建等）；训练与推理更多通过 **engine / inference / export** 子模块或 **`speedvqa/examples/`** 演示。
+
+---
+
+## 配置与数据要点
+
+- **全局配置**：`speedvqa/configs/default.yaml` 中 `model`、`data`、`train`、`export` 等节点控制结构体维度、增强、DataLoader、检查点与实验名等。
+- **数据路径**：默认 `data.dataset_path` 指向数据集根目录；其下可按实现约定放置 `annotations/`、`vqa_labels.jsonl` 等。
+- **答案映射**：`data.answer_mapping` 将多种中英文肯定/否定表述映射到二分类标签，便于混用语言标注。
+
+---
+
+## 典型工作流
+
+1. **准备数据**：按 X-AnyLabeling 或项目支持的格式组织 ROI 与问答标注。
+2. **调整配置**：复制并修改 `speedvqa/configs/default.yaml`（路径、batch、骨干、训练轮数等）。
+3. **训练**：使用 `ConfigurableTrainer` 或 `speedvqa/engine/trainer.py` 的入口逻辑（结合配置中的 `runs/train` 等路径）。
+4. **导出**：通过 `ModelExporter` 或 `speedvqa/examples/model_export_example.py` 生成 `.pt` / `.onnx` / `.engine`。
+5. **部署推理**：使用 `ROIInferencer` 加载对应格式，在目标 GPU 上验证延迟与准确率。
+
+统一产出目录约定见 **`docs/RUNS_DIRECTORY.md`**。
+
+---
+
+## 延伸阅读（仓库内）
+
+| 文档 / 路径 | 内容 |
+|-------------|------|
+| `docs/RUNS_DIRECTORY.md` | `runs/` 下训练、验证、推理、导出、超参等目录约定 |
+| `speedvqa/inference/README.md` | ROI 推理 API、批推理与参数说明 |
+| `speedvqa/export/README.md` | 多格式导出与配置项说明 |
+| `speedvqa/examples/*.py` | 导出、性能基准、超参数优化等可运行示例 |
+| `scripts/`（仓库根） | 一键训练/推理/导出：`onekey_*.sh` |
+| `requirements.txt` | Python 依赖版本约束 |
+
+---
+
+## 测试与质量
+
+- **`speedvqa/tests/`**：从仓库根运行 **`pytest`** 时由根目录 **`pyproject.toml`** 的 `testpaths` 指向此处；在 **`speedvqa/`** 下可执行 **`pytest -c pytest.ini`**。
+- **`speedvqa/tests/conftest.py`**：`collect_ignore` 排除 `test_model_basic.py`、`test_model_factory.py`，避免与「独立脚本式」运行重复；另配置 Hypothesis。
+- 建议在目标环境中运行与 GPU、TensorRT 相关的测试前，确认驱动与库版本与 `requirements.txt` 一致。
+
+若你扩展了规则或 Agent 行为，可在 **`.cursor/rules/`**、**`.cursor/AGENTS.md`** 中补充项目级说明，与本文档相互引用即可。

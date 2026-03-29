@@ -14,9 +14,11 @@ import shutil
 import time
 import numpy as np
 
-# 添加项目路径
 import sys
-sys.path.append('.')
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 from speedvqa.export.exporter import ModelExporter, export_model
 from speedvqa.utils.config import get_default_config

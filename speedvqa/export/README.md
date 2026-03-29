@@ -387,7 +387,7 @@ pip install -r requirements-dev.txt
 
 ### 运行测试
 ```bash
-python -m pytest tests/test_model_export.py -v
+python -m pytest speedvqa/tests/test_model_export.py -v
 ```
 
 ### 添加新格式支持

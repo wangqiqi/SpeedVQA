@@ -12,13 +12,8 @@ SpeedVQA: 极速视觉问答系统
 - 模块化设计，易于扩展
 
 使用示例:
-    from speedvqa import train, inference
-    
-    # 训练模型
-    train('configs/default.yaml')
-    
-    # 推理
-    result = inference('model.pt', 'roi_image.jpg', 'Is there a person?')
+    from speedvqa.utils.config import load_config
+    cfg = load_config()  # 默认 speedvqa/configs/default.yaml
 """
 
 __version__ = '1.0.0'

@@ -35,7 +35,7 @@ runs/
 
 ### 训练输出
 
-在 `configs/default.yaml` 中配置：
+在 `speedvqa/configs/default.yaml` 中配置：
 
 ```yaml
 train:
@@ -127,7 +127,7 @@ rm -rf runs/hyperopt/   # 清理超参数优化结果
 
 3. **记录实验配置**：每次实验都保存完整的配置文件
    ```bash
-   cp configs/default.yaml runs/train/{experiment_name}/config.yaml
+   cp speedvqa/configs/default.yaml runs/train/{experiment_name}/config.yaml
    ```
 
 4. **使用符号链接**：如果 `runs/` 目录需要在不同位置（如更大的磁盘）

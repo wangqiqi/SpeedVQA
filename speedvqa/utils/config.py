@@ -12,6 +12,26 @@ from pathlib import Path
 import argparse
 
 
+def get_package_root() -> Path:
+    """`speedvqa` 包根目录（内含 `configs/`）。"""
+    return Path(__file__).resolve().parent.parent
+
+
+def get_builtin_default_config_path() -> str:
+    return str(get_package_root() / "configs" / "default.yaml")
+
+
+def resolve_config_file(config_path: str) -> Path:
+    """解析配置文件路径：支持 cwd 相对路径，否则回退到包内 `speedvqa/configs/`。"""
+    p = Path(config_path)
+    if p.is_file():
+        return p.resolve()
+    fallback = get_package_root() / config_path
+    if fallback.is_file():
+        return fallback.resolve()
+    raise FileNotFoundError(f"Config file not found: {config_path}")
+
+
 class ConfigManager:
     """配置管理器"""
     
@@ -22,11 +42,9 @@ class ConfigManager:
     def load_config(self, config_path: Optional[str] = None) -> Dict[str, Any]:
         """加载配置文件"""
         if config_path is None:
-            config_path = self.config_path or 'configs/default.yaml'
+            config_path = self.config_path or get_builtin_default_config_path()
         
-        config_path = Path(config_path)
-        if not config_path.exists():
-            raise FileNotFoundError(f"Config file not found: {config_path}")
+        config_path = resolve_config_file(str(config_path))
         
         with open(config_path, 'r', encoding='utf-8') as f:
             self.config = yaml.safe_load(f)
@@ -160,10 +178,13 @@ class ConfigManager:
                 print("  " * indent + f"{key}: {value}")
 
 
-def load_config(config_path: str = 'configs/default.yaml', **kwargs) -> Dict[str, Any]:
-    """加载配置文件（支持命令行参数覆盖）"""
+def load_config(config_path: Optional[str] = None, **kwargs) -> Dict[str, Any]:
+    """加载配置文件（支持命令行参数覆盖）。默认使用包内 `speedvqa/configs/default.yaml`。"""
+    if config_path is None:
+        config_path = get_builtin_default_config_path()
+    resolved = str(resolve_config_file(config_path))
     config_manager = ConfigManager()
-    config = config_manager.load_config(config_path)
+    config = config_manager.load_config(resolved)
     
     # 命令行参数覆盖
     if kwargs:
@@ -184,7 +205,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='SpeedVQA Training and Inference')
     
     # 基本参数
-    parser.add_argument('--config', type=str, default='configs/default.yaml',
+    parser.add_argument('--config', type=str, default=get_builtin_default_config_path(),
                        help='Path to config file')
     parser.add_argument('--data', type=str, 
                        help='Path to dataset directory')
@@ -252,18 +273,19 @@ def create_experiment_config(base_config_path: str, experiment_name: str,
                            updates: Dict[str, Any]) -> str:
     """创建实验配置文件"""
     config_manager = ConfigManager()
-    config = config_manager.load_config(base_config_path)
+    config = config_manager.load_config(str(resolve_config_file(base_config_path)))
     config_manager.config = config
     config_manager.update_config(updates)
     
     # 设置实验名称
     config_manager.set('train.experiment_name', experiment_name)
     
-    # 保存实验配置
-    experiment_config_path = f'configs/experiments/{experiment_name}.yaml'
-    config_manager.save_config(experiment_config_path)
+    experiments_dir = get_package_root() / "configs" / "experiments"
+    experiments_dir.mkdir(parents=True, exist_ok=True)
+    experiment_config_path = experiments_dir / f'{experiment_name}.yaml'
+    config_manager.save_config(str(experiment_config_path))
     
-    return experiment_config_path
+    return str(experiment_config_path)
 
 
 def validate_paths_in_config(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -299,7 +321,7 @@ def validate_paths_in_config(config: Dict[str, Any]) -> Dict[str, Any]:
 # 便捷函数
 def get_default_config() -> Dict[str, Any]:
     """获取默认配置"""
-    return load_config('configs/default.yaml')
+    return load_config()
 
 
 def create_minimal_config(dataset_path: str, output_dir: str = './runs') -> Dict[str, Any]:

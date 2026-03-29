@@ -5,18 +5,22 @@ SpeedVQA模型工厂测试
 测试模型配置系统和工厂函数的功能。
 """
 
+import os
 import sys
-sys.path.append('.')
-
 import tempfile
-import yaml
 from pathlib import Path
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+os.chdir(_REPO_ROOT)
+
+import yaml
+
 from speedvqa.models.factory import (
-    ModelFactory, 
-    build_model, 
-    build_model_from_preset,
+    ModelFactory,
     get_model_presets,
-    get_supported_components
+    get_supported_components,
 )
 from speedvqa.utils.config import create_minimal_config
 
@@ -24,46 +28,44 @@ from speedvqa.utils.config import create_minimal_config
 def test_supported_components():
     """测试支持的组件列表"""
     print("=== 测试支持的组件 ===")
-    
+
     components = get_supported_components()
-    
+
     expected_components = ['vision_backbones', 'text_encoders', 'fusion_methods', 'activations']
     for component_type in expected_components:
         assert component_type in components
         assert len(components[component_type]) > 0
         print(f"✓ {component_type}: {list(components[component_type].keys())}")
-    
+
     print("✓ 支持的组件测试通过")
 
 
 def test_model_presets():
     """测试模型预设"""
     print("\n=== 测试模型预设 ===")
-    
+
     presets = get_model_presets()
-    
+
     expected_presets = ['small', 'base', 'large']
     for preset in expected_presets:
         assert preset in presets
         preset_config = presets[preset]
-        
-        # 验证预设配置结构
+
         assert 'name' in preset_config
         assert 'vision' in preset_config
         assert 'text' in preset_config
         assert 'fusion' in preset_config
         assert 'classifier' in preset_config
-        
+
         print(f"✓ {preset} 预设配置完整")
-    
+
     print("✓ 模型预设测试通过")
 
 
 def test_config_validation():
     """测试配置验证"""
     print("\n=== 测试配置验证 ===")
-    
-    # 测试有效配置
+
     valid_config = {
         'model': {
             'vision': {
@@ -88,38 +90,33 @@ def test_config_validation():
             }
         }
     }
-    
+
     try:
         ModelFactory._validate_config(valid_config)
         print("✓ 有效配置验证通过")
     except Exception as e:
         print(f"✗ 有效配置验证失败: {e}")
         return False
-    
-    # 测试无效配置
+
     invalid_configs = [
-        # 缺少model部分
         {},
-        # 无效的backbone
         {
             'model': {
                 'vision': {'backbone': 'invalid_backbone'}
             }
         },
-        # 无效的融合方法
         {
             'model': {
                 'fusion': {'method': 'invalid_method'}
             }
         },
-        # 无效的激活函数
         {
             'model': {
                 'classifier': {'activation': 'invalid_activation'}
             }
         }
     ]
-    
+
     for i, invalid_config in enumerate(invalid_configs):
         try:
             ModelFactory._validate_config(invalid_config)
@@ -127,7 +124,7 @@ def test_config_validation():
             return False
         except (ValueError, KeyError):
             print(f"✓ 无效配置 {i+1} 正确被拒绝")
-    
+
     print("✓ 配置验证测试通过")
     return True
 
@@ -135,8 +132,7 @@ def test_config_validation():
 def test_yaml_config_loading():
     """测试YAML配置文件加载"""
     print("\n=== 测试YAML配置文件加载 ===")
-    
-    # 创建临时配置文件
+
     config_data = {
         'model': {
             'name': 'test_model',
@@ -147,7 +143,7 @@ def test_yaml_config_loading():
                 'dropout': 0.1
             },
             'text': {
-                'encoder': 'distilbert-base-uncased',  # 使用标准编码器名称
+                'encoder': 'distilbert-base-uncased',
                 'max_length': 64,
                 'feature_dim': 512
             },
@@ -162,7 +158,6 @@ def test_yaml_config_loading():
                 'activation': 'relu'
             }
         },
-        # 添加必需的配置部分以通过验证
         'data': {
             'dataset_path': './test_dataset'
         },
@@ -173,44 +168,39 @@ def test_yaml_config_loading():
             }
         }
     }
-    
-    # 写入临时文件
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
         yaml.dump(config_data, f)
         temp_config_path = f.name
-    
+
     try:
-        # 测试从文件加载配置
         from speedvqa.utils.config import load_config
         loaded_config = load_config(temp_config_path)
-        
+
         assert 'model' in loaded_config
         assert loaded_config['model']['name'] == 'test_model'
         assert loaded_config['model']['vision']['backbone'] == 'mobilenet_v3_small'
-        
+
         print("✓ YAML配置文件加载成功")
-        
-        # 测试配置验证（只验证模型部分）
+
         ModelFactory._validate_config(loaded_config)
         print("✓ 加载的配置验证通过")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"✗ YAML配置文件加载失败: {e}")
         return False
-    
+
     finally:
-        # 清理临时文件
         Path(temp_config_path).unlink(missing_ok=True)
 
 
 def test_component_creation():
     """测试组件创建"""
     print("\n=== 测试组件创建 ===")
-    
+
     try:
-        # 测试视觉编码器创建
         vision_config = {
             'backbone': 'mobilenet_v3_small',
             'pretrained': False,
@@ -220,8 +210,7 @@ def test_component_creation():
         vision_encoder = ModelFactory.create_vision_encoder(vision_config)
         assert vision_encoder.feature_dim == 1024
         print("✓ 视觉编码器创建成功")
-        
-        # 测试融合层创建
+
         fusion_config = {
             'vision_dim': 1024,
             'text_dim': 768,
@@ -232,19 +221,18 @@ def test_component_creation():
         fusion_layer = ModelFactory.create_fusion_layer(fusion_config)
         assert fusion_layer.output_dim == 1792
         print("✓ 融合层创建成功")
-        
-        # 测试分类器创建
+
         classifier_config = {
             'input_dim': 1792,
             'hidden_dims': [512, 256],
             'num_classes': 2,
             'activation': 'relu'
         }
-        classifier = ModelFactory.create_classifier(classifier_config)
+        ModelFactory.create_classifier(classifier_config)
         print("✓ 分类器创建成功")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"✗ 组件创建失败: {e}")
         return False
@@ -253,7 +241,7 @@ def test_component_creation():
 def test_config_override():
     """测试配置覆盖"""
     print("\n=== 测试配置覆盖 ===")
-    
+
     base_config = {
         'model': {
             'vision': {
@@ -265,35 +253,33 @@ def test_config_override():
             }
         }
     }
-    
-    # 测试参数覆盖
+
     overrides = {
         'model': {
             'vision': {
-                'feature_dim': 512  # 覆盖特征维度
+                'feature_dim': 512
             },
             'classifier': {
-                'num_classes': 5  # 覆盖类别数
+                'num_classes': 5
             }
         }
     }
-    
+
     try:
         from speedvqa.utils.config import ConfigManager
         config_manager = ConfigManager()
         config_manager.config = base_config
         config_manager.update_config(overrides)
-        
+
         merged_config = config_manager.config
-        
-        # 验证覆盖结果
+
         assert merged_config['model']['vision']['feature_dim'] == 512
         assert merged_config['model']['classifier']['num_classes'] == 5
-        assert merged_config['model']['vision']['backbone'] == 'mobilenet_v3_small'  # 保持原值
-        
+        assert merged_config['model']['vision']['backbone'] == 'mobilenet_v3_small'
+
         print("✓ 配置覆盖测试通过")
         return True
-        
+
     except Exception as e:
         print(f"✗ 配置覆盖测试失败: {e}")
         return False
@@ -303,7 +289,7 @@ def main():
     """运行所有测试"""
     print("SpeedVQA模型配置系统测试")
     print("=" * 50)
-    
+
     tests = [
         test_supported_components,
         test_model_presets,
@@ -312,7 +298,7 @@ def main():
         test_component_creation,
         test_config_override
     ]
-    
+
     results = []
     for test in tests:
         try:
@@ -321,19 +307,17 @@ def main():
         except Exception as e:
             print(f"✗ 测试异常: {e}")
             results.append(False)
-    
-    # 总结
+
     print("\n" + "=" * 50)
     passed = sum(results)
     total = len(results)
     print(f"测试结果: {passed}/{total} 通过")
-    
+
     if passed == total:
         print("🎉 所有测试通过！模型配置系统工作正常。")
         return True
-    else:
-        print("❌ 部分测试失败，请检查实现。")
-        return False
+    print("❌ 部分测试失败，请检查实现。")
+    return False
 
 
 if __name__ == '__main__':

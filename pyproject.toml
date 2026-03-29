@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+# 从仓库根目录运行 pytest；等价配置见 speedvqa/pytest.ini（在 speedvqa/ 下 pytest -c pytest.ini）
+hypothesis_profile = "default"
+testpaths = ["speedvqa/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "-p", "no:warnings",
+]
+markers = [
+    "slow: 标记为慢速测试",
+    "integration: 标记为集成测试",
+    "unit: 标记为单元测试",
+    "property: 标记为属性测试",
+]
