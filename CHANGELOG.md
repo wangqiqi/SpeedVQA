@@ -16,6 +16,24 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2202`
+
+### 破坏性变更
+
+- **`python -m speedvqa.scripts.*`** 已移除；请改用 **`python -m speedvqa.cli.onekey_train`**（及 **`onekey_predict`**、**`onekey_export`**），或 **`pip install`** 后的 **`speedvqa-train`**、**`speedvqa-predict`**、**`speedvqa-export`**。
+
+### 新增
+
+- **`pyproject.toml`**：**`[project.scripts]`** 注册上述三个控制台命令。
+
+### 变更
+
+- **`speedvqa/scripts/`** 整包迁至 **`speedvqa/cli/`**（仅一处 Python 实现，避免与仓库根 **`scripts/*.sh`** 混淆）。
+- 仓库根 **`scripts/onekey_{train,predict,export}.sh`**：内部改为 **`python -m speedvqa.cli.onekey_*`**。
+- **`README.md`**、**`speedvqa/__init__.py`**、**`docs/01_设计.md`**、**`docs/02_开发.md`**、**`docs/03_使用.md`**：同步 CLI 路径与 entry points 说明。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2158`
 
 ### 变更

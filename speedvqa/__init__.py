@@ -19,7 +19,7 @@ SpeedVQA: 极速视觉问答系统
     - 超参: ``speedvqa.engine.hyperparameter_optimizer`` 等
     - 导出: ``speedvqa.export`` — 如 ``ModelExporter``（见 ``speedvqa/export/README.md``）
     - 推理: ``speedvqa.inference`` — 如 ``ROIInferencer``（见 ``speedvqa/inference/README.md``）
-    - 一键 CLI: ``python -m speedvqa.scripts.onekey_train``（及 predict / export）
+    - 一键 CLI: ``python -m speedvqa.cli.onekey_train``（及 predict / export）；安装后也可用 ``speedvqa-train`` 等（见 ``pyproject.toml`` 的 ``[project.scripts]``）
 
 可运行示例与 pytest 用例位于仓库内 ``speedvqa/examples/``、``speedvqa/tests/``（发布 wheel 中不包含二者，见根目录 ``pyproject.toml``）。
 

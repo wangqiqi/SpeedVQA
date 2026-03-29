@@ -25,7 +25,7 @@ cd /path/to/SpeedVQA
 pip install -r requirements.txt
 ```
 
-配置见 `speedvqa/configs/default.yaml`；示例在 `speedvqa/examples/`；一键流程：仓库根 `scripts/onekey_*.sh`（含 **`onekey_clean.sh`** 清理缓存与 `runs/` 等），或 `python -m speedvqa.scripts.onekey_train` 等。测试：在仓库根执行 `pytest`（见根目录 `pyproject.toml` 与 `speedvqa/pytest.ini`），或：
+配置见 `speedvqa/configs/default.yaml`；示例在 `speedvqa/examples/`；一键流程：仓库根 `scripts/onekey_*.sh`（含 **`onekey_clean.sh`** 清理缓存与 `runs/` 等），或 `python -m speedvqa.cli.onekey_train` 等；**`pip install -e .`** 后也可使用 **`speedvqa-train`** / **`speedvqa-predict`** / **`speedvqa-export`**。测试：在仓库根执行 `pytest`（见根目录 `pyproject.toml` 与 `speedvqa/pytest.ini`），或：
 
 ```bash
 python speedvqa/tests/run_tests.py

@@ -9,6 +9,11 @@ description = "Lightweight binary VQA (ROI + text) with training, export, and in
 readme = "README.md"
 requires-python = ">=3.10"
 
+[project.scripts]
+speedvqa-train = "speedvqa.cli.onekey_train:main"
+speedvqa-predict = "speedvqa.cli.onekey_predict:main"
+speedvqa-export = "speedvqa.cli.onekey_export:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["speedvqa*"]
