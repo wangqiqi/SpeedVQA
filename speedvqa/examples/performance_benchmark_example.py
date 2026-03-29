@@ -124,7 +124,7 @@ def demonstrate_basic_performance_benchmark():
                 'warmup_iterations': 5,
                 'test_iterations': 20
             },
-            'benchmark_report_dir': './benchmark_reports'
+            'benchmark_report_dir': './runs/benchmark_reports'
         }
     }
     
@@ -223,7 +223,7 @@ def demonstrate_comprehensive_benchmark():
                 'warmup_iterations': 10,
                 'test_iterations': 50
             },
-            'benchmark_report_dir': './benchmark_reports'
+            'benchmark_report_dir': './runs/benchmark_reports'
         }
     }
     
@@ -333,7 +333,7 @@ def demonstrate_comprehensive_benchmark():
                             print(f"      GPU: peak={memory.gpu_peak_memory_mb:.1f}MB")
             
             print("\n✓ Comprehensive benchmark completed!")
-            print("  Detailed report saved to: ./benchmark_reports/")
+            print("  Detailed report saved to: ./runs/benchmark_reports/")
         
         else:
             print("❌ No models were successfully exported")
@@ -600,7 +600,7 @@ def main():
         print("  ✓ Consistency verification")
         print("  ✓ Automated report generation")
         
-        print("\n📁 Check ./benchmark_reports/ for detailed reports and visualizations")
+        print("\n📁 Check ./runs/benchmark_reports/ for detailed reports and visualizations")
         
     except Exception as e:
         print(f"\n❌ Demo failed: {e}")

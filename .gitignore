@@ -143,7 +143,7 @@ test_data/
 *.test
 *.spec
 
-# Benchmark reports
+# Benchmark reports（根目录遗留；默认产出在 runs/ 下已由 runs/ 规则忽略）
 benchmark_reports/
 performance_reports/
 *.json

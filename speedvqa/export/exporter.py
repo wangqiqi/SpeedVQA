@@ -1426,7 +1426,7 @@ class ModelExporter:
         """保存基准测试报告"""
         try:
             # 创建报告目录
-            report_dir = Path(self.config.get('export', {}).get('benchmark_report_dir', './benchmark_reports'))
+            report_dir = Path(self.config.get('export', {}).get('benchmark_report_dir', './runs/benchmark_reports'))
             report_dir.mkdir(parents=True, exist_ok=True)
             
             # 生成报告文件名
@@ -1620,7 +1620,7 @@ if __name__ == '__main__':
     # 测试导出
     results = export_model(
         model=model,
-        output_dir='./exports',
+        output_dir='./runs/exports',
         model_name='speedvqa_test',
         config=config,
         formats=['pytorch', 'onnx']

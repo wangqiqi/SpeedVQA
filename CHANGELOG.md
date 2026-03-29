@@ -16,6 +16,22 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2234`
+
+### 变更
+
+- **导出基准报告**：默认 **`export.benchmark_report_dir`** 由仓库根 **`./benchmark_reports`** 改为 **`./runs/benchmark_reports`**，与 **`runs/`** 产物约定一致；**`performance_benchmark_example.py`**、**`docs/02_使用.md`** 目录说明与 **`onekey_clean.sh`**（不再单独删根目录 **`benchmark_reports`**，随 **`runs/`** 一并清理）已同步。
+
+---
+
+## [2026-03-29] — 变更（未发版 tag）
+
+### 变更
+
+- **导出路径**：默认导出目录由仓库根 **`exports/`** 改为 **`runs/exports/`**（**`onekey_export --output`**、**`artifact_paths.resolve_torch_write_path`** 的 export 改向、**`exporter.py` `__main__` 示例**）。仓库根 **`exports/`** 仍视为合法前缀以兼容旧目录；**`docs/02_使用.md`**、**`speedvqa/export/README.md`**、配置与代码注释已对齐。
+
+---
+
 ## [2026-03-29] — 文档（未发版 tag）
 
 ### 变更

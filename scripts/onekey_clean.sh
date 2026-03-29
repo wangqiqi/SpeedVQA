@@ -39,7 +39,7 @@ shopt -s nullglob
 # —— 仓库根目录下的约定目录（与 default.yaml / onekey_export 等一致）——
 for name in runs exports cache test_runs test_outputs test_data \
   .pytest_cache .hypothesis build dist htmlcov .mypy_cache .ruff_cache .tox \
-  mlruns tb_logs benchmark_reports performance_reports \
+  mlruns tb_logs performance_reports \
   visualizations plots inference_outputs predictions \
   model_exports exported_models; do
   rm_path "$ROOT/$name"
