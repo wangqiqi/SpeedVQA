@@ -40,6 +40,7 @@ except ImportError:
     logging.warning("TensorRT not available. TensorRT export will be disabled.")
 
 from ..models.speedvqa import SpeedVQAModel
+from ..utils.artifact_paths import resolve_torch_write_path
 
 
 @dataclass
@@ -176,6 +177,14 @@ class ModelExporter:
         start_time = time.time()
         
         try:
+            _exp = self.config.get('train', {}).get('experiment_name', 'speedvqa_export')
+            save_path = str(
+                resolve_torch_write_path(
+                    save_path,
+                    experiment_name=_exp,
+                    artifact_kind='export',
+                )
+            )
             # 确保模型在评估模式
             model.eval()
             

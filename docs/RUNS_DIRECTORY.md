@@ -2,6 +2,8 @@
 
 本项目使用统一的 `runs/` 目录来管理所有训练、验证、推理和优化的输出文件。
 
+**路径约束**：在仓库根目录下运行时，若配置或代码会把检查点/导出写到仓库根或 `speedvqa/` 源码树等非约定位置，`speedvqa.utils.artifact_paths` 会将目录改写到 `runs/train/<experiment_name>/` 或 `exports/<experiment_name>/`（`runs/`、`exports/`、`cache/` 已在 `.gitignore` 中，无需提交产物）。详见实现：`speedvqa/utils/artifact_paths.py`。
+
 ## 目录结构
 
 ```
@@ -100,7 +102,14 @@ visualizer.save_visualizations('runs/inference/visualizations/')
 
 ## 清理
 
-如需清理所有输出：
+推荐使用仓库根脚本（可先 **`--dry-run`** 预览）：
+
+```bash
+./scripts/onekey_clean.sh --dry-run
+./scripts/onekey_clean.sh
+```
+
+亦可仅删除训练与实验输出：
 
 ```bash
 rm -rf runs/

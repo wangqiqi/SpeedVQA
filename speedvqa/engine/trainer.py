@@ -17,6 +17,7 @@ import logging
 from tqdm import tqdm
 
 from ..models.speedvqa import SpeedVQAModel
+from ..utils.artifact_paths import resolve_train_save_dir
 from ..utils.config import ConfigManager
 
 
@@ -62,8 +63,10 @@ class ConfigurableTrainer:
         self.config = config
         self.train_config = config.get('train', {})
         
-        # 保存目录
-        self.save_dir = Path(self.train_config.get('save_dir', './runs/train'))
+        # 保存目录（仓库内强制落在 runs/exports/cache 下，避免根目录误写）
+        _raw_save = self.train_config.get('save_dir', './runs/train')
+        _exp = self.train_config.get('experiment_name', 'speedvqa_exp')
+        self.save_dir, self._save_dir_coerced = resolve_train_save_dir(_raw_save, _exp)
         self.save_dir.mkdir(parents=True, exist_ok=True)
         
         # 设置日志（必须在device setup之前）
@@ -104,6 +107,12 @@ class ConfigurableTrainer:
         self.logger.info(f"Trainer initialized with device: {self.device}")
         self.logger.info(f"Mixed precision: {self.use_amp}")
         self.logger.info(f"Gradient accumulation steps: {self.gradient_accumulation_steps}")
+        if getattr(self, '_save_dir_coerced', False):
+            self.logger.info(
+                "训练检查点目录已从 save_dir=%r 规范到 %s（产物应在 runs/ 下，见 docs/RUNS_DIRECTORY.md）",
+                _raw_save,
+                self.save_dir,
+            )
     
     def _setup_device(self) -> torch.device:
         """设置训练设备"""

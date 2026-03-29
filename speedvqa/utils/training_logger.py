@@ -12,6 +12,8 @@ from typing import Dict, Any, Optional, Union
 from datetime import datetime
 import torch
 
+from .artifact_paths import resolve_torch_write_path
+
 
 class TrainingLogger:
     """训练日志记录器"""
@@ -241,7 +243,11 @@ class TrainingLogger:
     def save_checkpoint(self, checkpoint_data: Dict[str, Any], 
                        checkpoint_path: str, is_best: bool = False):
         """保存检查点"""
-        checkpoint_path = Path(checkpoint_path)
+        checkpoint_path = resolve_torch_write_path(
+            checkpoint_path,
+            experiment_name=self.experiment_name,
+            artifact_kind="train",
+        )
         checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
         
         # 添加日志信息到检查点

@@ -87,6 +87,7 @@ train:
   # 训练基本配置
   epochs: 100
   resume: null  # 恢复训练的checkpoint路径
+  # 检查点目录：须落在 runs/（或 exports/、cache/）下；若配置为「.」等仓库根相对路径，运行时会自动改写到 runs/train/<experiment_name>/
   save_dir: './runs/train'
   experiment_name: 'speedvqa_exp1'
   

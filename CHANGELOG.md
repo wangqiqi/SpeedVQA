@@ -2,17 +2,34 @@
 
 ## Tag 规范
 
-Git **tag** 采用 **`N.XY.ABCD`** 四段点分数字形态（非 SemVer）：
+Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 | 段 | 占位 | 含义 |
 |----|------|------|
 | **N** | 单段数字 | 主序号（如主版本/批次），由项目约定递增或固定。 |
-| **XY** | 两位 | 通常为 **`DD`**（月内日期，01–31），与发布日对齐。 |
+| **MMDD** | 四位 | **`MM`**（01–12）+ **`DD`**（01–31），与发布日对齐。 |
 | **ABCD** | 四位 | **`HHMM`**，24 小时制的小时与分钟（如 `0930`、`1430`）。 |
 
-**示例**：`1.29.1430` 表示 `N=1`、日期 **`29`** 日、时间 **14:30**（具体月份以当日发布上下文为准，或与 CHANGELOG 日期行一致）。
+**示例**：`1.0329.1430` 表示 `N=1`、**3 月 29 日**（`0329`）、时间 **14:30**。
 
-> 与历史条目中的语义化别名 tag（如 `chore-speedvqa-*`）可并存；新发布若采用本规范，建议在 CHANGELOG 对应条目标注 **`tag N.XY.ABCD`**（将各段换为实际数字）。
+> 与历史条目中的语义化别名 tag（如 `chore-speedvqa-*`）可并存；新发布若采用本规范，建议在 CHANGELOG 对应条目标注 **`tag N.MMDD.ABCD`**（将各段换为实际数字）。
+
+---
+
+## [2026-03-29] — tag `1.0329.2141`
+
+### 新增
+
+- **`speedvqa/utils/artifact_paths.py`**：解析训练 **`save_dir`** 与 **`torch.save` 写入路径**；在 SpeedVQA 仓库内时，强制落在 **`runs/`**、**`exports/`** 或 **`cache/`** 下（否则改写到 **`runs/train/<experiment_name>/`** 或 **`exports/<experiment_name>/`**），避免在仓库根或源码树散落无扩展名检查点。
+- **`speedvqa/tests/test_artifact_paths.py`**：覆盖上述解析与改向逻辑。
+
+### 变更
+
+- **`speedvqa/engine/trainer.py`**：使用 **`resolve_train_save_dir`**；若发生改向则打日志说明。
+- **`speedvqa/utils/training_logger.py`**：**`save_checkpoint`** 经 **`resolve_torch_write_path(..., artifact_kind='train')`**。
+- **`speedvqa/export/exporter.py`**：PyTorch 导出路径经 **`resolve_torch_write_path(..., artifact_kind='export')`**。
+- **`speedvqa/configs/default.yaml`**、**`docs/RUNS_DIRECTORY.md`**：补充产物目录约定与 **`artifact_paths`** 说明。
+- **`scripts/onekey_clean.sh`**：增加对仓库根 **无扩展名且为 Zip** 文件的清理（多为误 **`torch.save`** 产物）。
 
 ---
 
@@ -20,7 +37,7 @@ Git **tag** 采用 **`N.XY.ABCD`** 四段点分数字形态（非 SemVer）：
 
 ### 文档
 
-- **`CHANGELOG.md`**：新增 **Tag 规范**（`N.XY.ABCD`：`XY` 为日期 **`DD`**，`ABCD` 为 **`HHMM`**）。
+- **`CHANGELOG.md`**：新增 **Tag 规范**（`N.MMDD.ABCD`：第二段为 **`MMDD`**，`ABCD` 为 **`HHMM`**）。
 
 ---
 
