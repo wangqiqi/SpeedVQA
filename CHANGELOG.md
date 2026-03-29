@@ -16,6 +16,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-29] — tag `1.0329.2158`
+
+### 变更
+
+- **文档**：将 **`docs/PROJECT_OVERVIEW.md`**、**`docs/RUNS_DIRECTORY.md`** 分别并入 **`docs/01_设计.md`**、**`docs/02_开发.md`**、**`docs/04_部署.md`**；删除上述两文件及 **`docs/README.md`**，其索引并入根目录 **`README.md`**；**`docs/使用指南.md`** 与 **`speedvqa/engine/trainer.py`** 中的文档链接同步改为分册路径。
+
+---
+
 ## [2026-03-29] — tag `1.0329.2150`
 
 ### 变更

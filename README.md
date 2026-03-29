@@ -10,8 +10,11 @@
 
 | 资源 | 说明 |
 |------|------|
-| [项目介绍](docs/PROJECT_OVERVIEW.md) | 定位、架构、目录与工作流 |
-| [文档索引](docs/README.md) | `runs/` 约定及模块 README 链接 |
+| [使用指南](docs/使用指南.md) | 分主题阅读顺序与模块链接 |
+| [01 设计](docs/01_设计.md) | 定位、特性、目录结构、工作流、扩展骨干 |
+| [02 开发](docs/02_开发.md) | 环境、推荐导入、测试与质量 |
+| [03 使用](docs/03_使用.md) | 配置、训练、预测与示例入口 |
+| [04 部署](docs/04_部署.md) | 导出、推理、`runs/` 约定与清理 |
 | [推理模块](speedvqa/inference/README.md) | `ROIInferencer` API |
 | [导出模块](speedvqa/export/README.md) | `ModelExporter` 与格式说明 |
 
