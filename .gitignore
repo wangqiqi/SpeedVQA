@@ -36,11 +36,11 @@ wandb/
 *.plan
 *.trt
 
-# Data
-data/
-datasets/
-annotations/
-images/
+# Data（Leading / = 仅仓库根目录，避免误忽略 speedvqa/data 等包内路径）
+/data/
+/datasets/
+/annotations/
+/images/
 videos/
 *.jpg
 *.jpeg
@@ -50,8 +50,8 @@ videos/
 *.mov
 *.mkv
 
-# Models
-models/
+# Models（Leading / = 仅根目录 weights 树；speedvqa/models 为源码）
+/models/
 weights/
 pretrained/
 *.weights

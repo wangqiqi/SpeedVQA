@@ -199,6 +199,36 @@ class TestMultiModalFusion:
         assert fusion.output_dim == 256
         assert torch.isfinite(fused_features).all()
     
+    def test_film_fusion(self):
+        """FiLM：文本调制视觉后拼接"""
+        config = {
+            'vision_dim': self.vision_dim,
+            'text_dim': self.text_dim,
+            'method': 'film',
+            'hidden_dim': self.vision_dim + self.text_dim,
+            'dropout': 0.1,
+            'use_layer_norm': True,
+        }
+        fusion = MultiModalFusion(config)
+        fused = fusion(self.vision_features, self.text_features)
+        assert fused.shape == (self.batch_size, config['hidden_dim'])
+        assert torch.isfinite(fused).all()
+
+    def test_cross_attn_fusion(self):
+        """跨模态单 token 注意力"""
+        config = {
+            'vision_dim': self.vision_dim,
+            'text_dim': self.text_dim,
+            'method': 'cross_attn',
+            'hidden_dim': 256,
+            'dropout': 0.1,
+            'use_layer_norm': True,
+        }
+        fusion = MultiModalFusion(config)
+        fused = fusion(self.vision_features, self.text_features)
+        assert fused.shape == (self.batch_size, 256)
+        assert torch.isfinite(fused).all()
+
     def test_invalid_fusion_method(self):
         """测试无效的融合方法"""
         config = {
@@ -399,13 +429,18 @@ class TestSpeedVQAModelIntegration:
     
     def test_different_fusion_methods(self):
         """测试不同融合方法的正确性"""
-        fusion_methods = ['concat', 'attention', 'bilinear']
-        
+        fusion_methods = ['concat', 'attention', 'bilinear', 'film', 'cross_attn']
+
         for method in fusion_methods:
             # 更新配置
             config = self.config.copy()
             config['fusion']['method'] = method
-            config['fusion']['hidden_dim'] = 512 if method != 'concat' else 1792
+            if method == 'concat':
+                config['fusion']['hidden_dim'] = 1792
+            elif method == 'film':
+                config['fusion']['hidden_dim'] = 1792
+            else:
+                config['fusion']['hidden_dim'] = 512
             
             vision_encoder = VisionEncoder(config['vision'])
             text_encoder = MockTextEncoder(config['text'])
@@ -433,7 +468,10 @@ class TestSpeedVQAModelIntegration:
             logits = classifier(fused_features)
             
             # 验证输出
-            expected_fusion_dim = 1792 if method == 'concat' else 512
+            if method in ('concat', 'film'):
+                expected_fusion_dim = 1792
+            else:
+                expected_fusion_dim = 512
             assert fused_features.shape == (self.batch_size, expected_fusion_dim)
             assert logits.shape == (self.batch_size, 2)
             assert torch.isfinite(logits).all()

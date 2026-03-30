@@ -20,8 +20,9 @@ model:
   
   # 融合层配置
   fusion:
-    method: 'concat'  # concat, attention, bilinear
-    hidden_dim: 1792  # vision_dim + text_dim
+    # concat | attention | bilinear | film（文本调制视觉再拼接） | cross_attn（文本 Q、视觉 KV）
+    method: 'concat'
+    hidden_dim: 1792  # concat/film：建议 vision_dim+text_dim；cross_attn/attention/bilinear：投影维
     dropout: 0.3
     use_layer_norm: true
   

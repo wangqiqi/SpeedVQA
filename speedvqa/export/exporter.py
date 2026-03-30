@@ -34,7 +34,7 @@ except ImportError:
     TENSORRT_AVAILABLE = False
     logging.warning("TensorRT not available. TensorRT export will be disabled.")
 
-from ..models.speedvqa import SpeedVQAModel
+from ..models.speedvqa import SpeedVQAModel, SpeedVQAOnnxWrapper
 from ..utils.artifact_paths import resolve_torch_write_path
 
 
@@ -281,27 +281,34 @@ class ModelExporter:
                     'attention_mask': (batch_size, max_length)
                 }
             
-            # 创建示例输入
+            # 创建示例输入（与模型同设备，随后统一 CPU 导出以避免 CPU/GPU 混用）
             dummy_inputs = self._create_dummy_inputs(input_shapes)
-            
+
+            export_dev = torch.device('cpu')
+            wrapped = SpeedVQAOnnxWrapper(model).to(export_dev).eval()
+            img = dummy_inputs['image'].to(export_dev)
+            input_ids = dummy_inputs['input_ids'].to(export_dev)
+            attention_mask = dummy_inputs['attention_mask'].to(export_dev)
+            export_args = (img, input_ids, attention_mask)
+
             # 默认动态轴配置
             if dynamic_axes is None:
                 dynamic_axes = {
                     'image': {0: 'batch_size'},
                     'input_ids': {0: 'batch_size'},
                     'attention_mask': {0: 'batch_size'},
-                    'logits': {0: 'batch_size'}
+                    'logits': {0: 'batch_size'},
                 }
-            
+
             # 创建保存目录
             save_path = Path(save_path)
             save_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            # 导出ONNX
+
+            # 导出 ONNX（字典 batch 无法被 torch.onnx.export 正确传入 forward）
             with torch.no_grad():
                 torch.onnx.export(
-                    model,
-                    dummy_inputs,
+                    wrapped,
+                    export_args,
                     str(save_path),
                     export_params=True,
                     opset_version=opset_version,
@@ -309,7 +316,7 @@ class ModelExporter:
                     input_names=['image', 'input_ids', 'attention_mask'],
                     output_names=['logits'],
                     dynamic_axes=dynamic_axes,
-                    verbose=False
+                    verbose=False,
                 )
             
             # 验证ONNX模型
@@ -325,7 +332,14 @@ class ModelExporter:
             # 验证导出的模型
             validation_result = None
             if self.validation_config.get('enabled', True):
-                validation_result = self._validate_onnx_export(model, str(save_path), dummy_inputs)
+                val_inputs = {
+                    'image': img,
+                    'input_ids': input_ids,
+                    'attention_mask': attention_mask,
+                }
+                validation_result = self._validate_onnx_export(
+                    model, str(save_path), val_inputs
+                )
             
             return ExportResult(
                 success=True,
@@ -643,9 +657,11 @@ class ModelExporter:
             ort_outputs = ort_session.run(None, ort_inputs)
             onnx_logits = torch.from_numpy(ort_outputs[0])
             
-            # 原始模型推理
+            # 原始模型推理（输入与模型同设备）
             with torch.no_grad():
-                original_output = original_model(test_inputs)
+                dev = next(original_model.parameters()).device
+                batch = {k: v.to(dev) for k, v in test_inputs.items()}
+                original_output = original_model(batch)
                 original_logits = original_output['logits'].cpu()
             
             # 计算数值精度

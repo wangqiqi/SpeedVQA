@@ -16,6 +16,21 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2110`
+
+### 新增
+
+- **融合（Phase A）**：**`MultiModalFusion`** 支持 **`film`**（文本 FiLM 调制视觉后再拼接 MLP）与 **`cross_attn`**（文本 Q、视觉 KV 的单层跨模态注意力）；**`model.fusion.method`** 默认仍为 **`concat`**。
+
+### 变更
+
+- **`.gitignore`**：将 **`data/`**、**`datasets/`**、**`annotations/`**、**`images/`**、**`models/`** 改为仅匹配仓库根（**`/data/`** 等），误忽略的 **`speedvqa/models/`**、**`speedvqa/data/`** 现纳入版本控制。
+- **ONNX 导出**：**`SpeedVQAOnnxWrapper`** 包装 **`SpeedVQAModel`**，**`torch.onnx.export`** 使用 **`(image, input_ids, attention_mask)`** 三参数；导出在 **CPU** 上追踪；**`_validate_onnx_export`** 将输入张量对齐到模型参数设备后再比 logits。
+- **配置 / 工厂**：**`default.yaml`** 融合注释；**`ModelFactory.SUPPORTED_FUSION_METHODS`** 增补 **`film`**、**`cross_attn`**。
+- **文档与计划**：**`docs/01_设计.md`** 模型行补充融合与 ONNX 说明；**`docs/02_使用.md`** Phase 0 ONNX 小节补充 Wrapper 与 I/O 名；**`plan.md`** Phase A 任务状态与基线表 ONNX 说明更新。
+- **测试**：**`test_speedvqa_model.py`** 覆盖 **`film`** / **`cross_attn`** 及集成用例。
+---
+
 ## [2026-03-30] — tag `1.0330.2104`
 
 ### 变更

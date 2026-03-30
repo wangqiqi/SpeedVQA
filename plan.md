@@ -18,12 +18,13 @@
 
 ## 当前进行
 
-### Phase A — 轻量跨模态融合（下一阶段）
+### Phase A — 轻量跨模态融合（进行中）
 
 | 字段 | 内容 |
 |------|------|
-| **依赖** | Phase 0 文档与冒烟链路已就绪；**ONNX 一键导出**与当前 `SpeedVQAModel.forward(batch)` 签名仍待联调（见基线表） |
-| **状态** | `待开始`（实现 A-1～A-3 前建议先修导出路径或定「Phase A 仅 PyTorch 验收」的临时口径） |
+| **进展** | **`film`** / **`cross_attn`** 已接入 **`MultiModalFusion`**；**`SUPPORTED_FUSION_METHODS`**、**`default.yaml`** 注释、**`docs/01_设计.md`**、单元测试已更新；**ONNX** 使用 **`SpeedVQAOnnxWrapper`** + CPU 追踪修复 `forward(batch)` 与导出器不兼容问题。 |
+| **待办** | **A-5** 业务/冒烟集上 **`film` vs `concat` 消融**并填基线表；**A-6** 在真实训练检查点上复测 **`onekey_export`** ONNX 与 ORT 数值对齐（DistilBERT 全量导出可能较慢）。 |
+| **状态** | `进行中` |
 
 ---
 
@@ -93,13 +94,13 @@
 
 | 任务 ID | 内容 | 涉及路径（预期） | 状态 |
 |---------|------|------------------|------|
-| A-1 | 设计张量形状与配置键，更新 `default.yaml` 示例与注释 | `speedvqa/configs/default.yaml` | 待开始 |
-| A-2 | 实现新融合模块并接入 `SpeedVQAModel` | `speedvqa/models/speedvqa.py` | 待开始 |
-| A-3 | `factory` / 配置校验与 `SUPPORTED_*` | `speedvqa/models/factory.py` | 待开始 |
-| A-4 | 单元测试：前向形状、与 concat 切换、配置非法报错 | `speedvqa/tests/test_model_basic.py` 或新测文件 | 待开始 |
-| A-5 | 训练消融：新融合 vs concat，填基线对比表 | `runs/` + 本计划基线表 | 待开始 |
-| A-6 | ONNX 导出与数值对齐验证 | `speedvqa/export/`、现有导出测试或脚本 | 待开始 |
-| A-7 | 更新 `docs/01_设计.md` 融合小节 | `docs/01_设计.md` | 待开始 |
+| A-1 | 设计张量形状与配置键，更新 `default.yaml` 示例与注释 | `speedvqa/configs/default.yaml` | **已完成** |
+| A-2 | 实现新融合模块并接入 `SpeedVQAModel` | `speedvqa/models/speedvqa.py`（含 **`SpeedVQAOnnxWrapper`**） | **已完成** |
+| A-3 | `factory` / 配置校验与 `SUPPORTED_*` | `speedvqa/models/factory.py` | **已完成** |
+| A-4 | 单元测试：前向形状、与 concat 切换、配置非法报错 | `speedvqa/tests/test_speedvqa_model.py` | **已完成** |
+| A-5 | 训练消融：新融合 vs concat，填基线对比表 | `runs/` + 本计划基线表 | **待开始** |
+| A-6 | ONNX 导出与数值对齐验证 | `speedvqa/export/exporter.py` | **部分完成**（实现已修；待真实 ckpt 上验收） |
+| A-7 | 更新 `docs/01_设计.md` 融合小节 | `docs/01_设计.md` | **已完成** |
 
 **验收**：满足上文「阶段验收默认门槛」；默认 **不** 将新方法改为全局默认，直至消融达标后由评审改 `default.yaml`。
 
@@ -165,7 +166,7 @@
 | 验证集 Acc / F1（末 epoch） | Acc **1.0** / weighted F1 **1.0**（val **4** 条，极低方差，不可替代真实基线） |
 | 推理 p50 / p95（硬件） | **未登记**；请在目标 GPU 上用 `ROIInferencer`、batch=1 补测并更新本表 |
 | `runs/` 实验目录 | `runs/train/phase0_baseline_smoke/`（`best_checkpoint.pth`、`training.log`） |
-| ONNX 对齐备注 | 已执行：`python -m speedvqa.cli.onekey_export --checkpoint runs/train/phase0_baseline_smoke/best_checkpoint.pth --formats pytorch,onnx`。**ONNX**：`torch.onnx.export` 报错 `SpeedVQAModel.forward() missing ... 'batch'`；**PyTorch 复检**：存在 CPU/GPU 输入与权重类型不一致提示。**后续**：导出器与模型 `forward` 契约联调后再填「logits 误差阈值内」结论。 |
+| ONNX 对齐备注 | **实现更新（2026-03-30）**：导出使用 **`SpeedVQAOnnxWrapper`**（三 tensor 入参）+ CPU **`torch.onnx.export`**；**`_validate_onnx_export`** 将 batch 张量对齐到模型设备。**待复测**：在本地检查点上执行 `onekey_export`，确认 ORT 与 PyTorch 的 logits 在 **`export.validation.tolerance`** 内。 |
 
 ---
 
@@ -177,5 +178,11 @@
 - **`speedvqa/configs/phase0_smoke.yaml`**、**`speedvqa/examples/phase0_smoke_dataset.py`**：可复现短训与最小数据集。
 - **`default.yaml`**：`optimizer.eps`、`scheduler.warmup_lr` / `min_lr` 改为 **`1.0e-8` / `1.0e-6`**，避免 PyYAML 将 `1e-8` 解析为字符串导致 `AdamW` 报错。
 - **基线表**：见上文；CHANGELOG 同期条目请对照 Git tag 规范更新。
+
+### Phase A — 融合与导出（迭代一，2026-03-30）
+
+- **`MultiModalFusion`**：新增 **`film`**、 **`cross_attn`**；默认仍为 **`concat`**。
+- **`ModelExporter.export_onnx`**：**`SpeedVQAOnnxWrapper`**、CPU 导出、ORT 校验时设备对齐。
+- **文档/测试**：**`docs/01_设计.md`**、**`test_speedvqa_model.py`** 覆盖新融合。
 
 （阶段完成后将摘要移入此处，并引用 `CHANGELOG.md` 对应条目。）
