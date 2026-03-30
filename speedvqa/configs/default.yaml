@@ -78,6 +78,13 @@ data:
     test_ratio: 0.1
     random_seed: 42
   
+  # 官方 VQA JSON（visualqa.org）：OpenEnded_*_questions.json + *_annotations.json + images/
+  # enabled: auto（发现成对文件则加载）| true（必须加载成功）| false
+  vqa_official:
+    enabled: auto
+    questions_json: null  # 可选，相对 dataset_path；null 则在根目录自动配对
+    annotations_json: null
+  
   # 答案标准化配置
   answer_mapping:
     positive: ['是', 'yes', 'y', '有', '存在', '正确', '对', 'true', '1']

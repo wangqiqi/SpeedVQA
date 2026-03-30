@@ -1,0 +1,24 @@
+# Balanced Binary Abstract（val2017）— 官方 JSON 在 dataset 根目录时 vqa_official:auto 即可加载。
+# 数据：./datasets/vqa_abstract_binary_2017/val2017（questions + annotations + images/）
+
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/vqa_abstract_binary_2017/val2017
+  vqa_official:
+    enabled: auto
+  dataloader:
+    batch_size: 16
+    num_workers: 2
+
+train:
+  save_dir: ./runs/train/abstract_binary_val2017
+  epochs: 3
+  experiment_name: abstract_binary_val2017_smoke
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false

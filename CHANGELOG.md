@@ -16,6 +16,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2220`
+
+### 新增
+
+- **数据**：**官方 VQA JSON 适配层** — **`speedvqa/data/loaders/vqa_official.py`**，在 **`data.vqa_official`**（`enabled: auto|true|false`）下与 X-AnyLabeling 源并存；支持 **abstract_v002** PNG 命名及 **mscoco** 文件名解析占位；**`speedvqa/configs/abstract_binary_val2017.yaml`** 冒烟配置；**`speedvqa/examples/dump_vqa_official_jsonl.py`** 导出 **`vqa_labels.jsonl`**。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2120`
 
 ### 新增

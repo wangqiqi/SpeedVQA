@@ -18,6 +18,8 @@ from PIL import Image
 from transformers import AutoTokenizer
 import numpy as np
 
+from .loaders import load_vqa_official_if_enabled
+
 
 class VQADataset(Dataset):
     """VQA数据集加载器（完全兼容X-AnyLabeling）"""
@@ -57,6 +59,18 @@ class VQADataset(Dataset):
         questions_file = self.data_path / 'questions.txt'
         if questions_file.exists():
             samples.extend(self._load_from_txt(questions_file))
+        
+        # 格式4: 官方 VQA 发布（visualqa.org）Questions + Annotations JSON + images/
+        vo = self.config.get('data', {}).get('vqa_official', {})
+        samples.extend(
+            load_vqa_official_if_enabled(
+                self.data_path,
+                self._normalize_answer,
+                vo.get('enabled', 'auto'),
+                vo.get('questions_json'),
+                vo.get('annotations_json'),
+            )
+        )
         
         if not samples:
             raise ValueError(f"No valid data found in {self.data_path}")
