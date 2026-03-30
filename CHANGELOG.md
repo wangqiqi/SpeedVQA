@@ -16,6 +16,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2153`
+
+### 新增
+
+- **Cursor Master 指令中枢**：**`.cursor/AGENTS.md`** 作为仓库 Agent 总入口（资源地图、发布与 tag、Git 边界、`plan.md` / `CHANGELOG` 约定）；**`.cursor/rules/00-master-hub.mdc`**（`alwaysApply`）指向该文件；**`.cursor/skills/README.md`**、**`.cursor/workflows/README.md`** 说明扩展方式。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2149`
 
 ### 新增

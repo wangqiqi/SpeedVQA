@@ -1,0 +1,10 @@
+---
+description: 指向仓库 Master 指令中枢；任务开始前对齐 SpeedVQA 约定
+alwaysApply: true
+---
+
+# Master 指令中枢
+
+- **首要阅读**：项目根 `.cursor/AGENTS.md`（资源地图、发布流程、Git 边界、plan/CHANGELOG 约定）。
+- **规则分层**：具体编码与目录约定放在本目录其他 `*.mdc`（`globs` / `alwaysApply`）；避免在多条规则中重复长文。
+- **与 CHANGELOG 一致**：涉及发版时，先写 CHANGELOG 再打 tag，提交说明与条目对应。
