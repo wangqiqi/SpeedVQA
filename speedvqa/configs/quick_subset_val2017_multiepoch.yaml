@@ -1,0 +1,26 @@
+# 小批量 + 多 epoch：从 val2017 随机抽 1000 条（seed 固定），再 70/20/10 划分，用于快速验证训练是否在改善。
+# 命令：python3 -m speedvqa.cli.onekey_train --config speedvqa/configs/quick_subset_val2017_multiepoch.yaml
+
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/vqa_abstract_binary_2017/val2017
+  vqa_official:
+    enabled: auto
+  max_samples: 1000
+  subsample_seed: 42
+  dataloader:
+    batch_size: 32
+    num_workers: 2
+
+train:
+  epochs: 15
+  save_dir: ./runs/train/quick_subset_val2017
+  experiment_name: quick_subset_val2017
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false

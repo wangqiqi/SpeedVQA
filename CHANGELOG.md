@@ -37,6 +37,14 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2205`
+
+### 新增
+
+- **数据**：**`data.max_samples`**、**`data.subsample_seed`** — 合并来源后截断/可复现随机子集，便于小批量多 epoch 快速验证；**`speedvqa/configs/quick_subset_val2017_multiepoch.yaml`** 示例（**1000** 条 × **15** epoch）。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2145`
 
 ### 新增

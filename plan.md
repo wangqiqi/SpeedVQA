@@ -78,5 +78,5 @@
 
 | 周次 | 内容 |
 |------|------|
-| W1 | Phase A：加 epoch、可选 train2017；评审是否立项 Phase B |
+| W1 | Phase A：加 epoch、**`quick_subset_val2017_multiepoch.yaml`**（`max_samples`）快速验证；可选 train2017；评审 Phase B |
 | W2+ | Phase B（若立项） |

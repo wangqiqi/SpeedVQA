@@ -8,6 +8,7 @@ SpeedVQA数据集加载器
 import os
 import json
 import glob
+import random
 from typing import Dict, List, Tuple, Any, Optional
 from pathlib import Path
 
@@ -72,6 +73,8 @@ class VQADataset(Dataset):
             )
         )
         
+        samples = self._maybe_subsample(samples)
+        
         if not samples:
             raise ValueError(f"No valid data found in {self.data_path}")
         
@@ -80,6 +83,29 @@ class VQADataset(Dataset):
         print(f"  - Data sources: {self._get_data_sources(samples)}")
         
         return samples
+    
+    def _maybe_subsample(self, samples: List[Dict]) -> List[Dict]:
+        """快速试验：data.max_samples + 可选 data.subsample_seed（先打乱再截断，可复现）。"""
+        dc = self.config.get("data", {})
+        raw = dc.get("max_samples")
+        if raw is None:
+            return samples
+        try:
+            max_n = int(raw)
+        except (TypeError, ValueError):
+            return samples
+        if max_n <= 0 or len(samples) <= max_n:
+            return samples
+        sub_seed = dc.get("subsample_seed")
+        if sub_seed is not None:
+            rng = random.Random(int(sub_seed))
+            order = list(range(len(samples)))
+            rng.shuffle(order)
+            picked = [samples[i] for i in order[:max_n]]
+            print(f"Subsampled {len(samples)} -> {len(picked)} (max_samples={max_n}, subsample_seed={sub_seed})")
+            return picked
+        print(f"Subsampled {len(samples)} -> {max_n} (max_samples, head slice)")
+        return samples[:max_n]
     
     def _load_from_single_json(self, json_file: Path) -> List[Dict]:
         """从X-AnyLabeling单个JSON文件加载数据"""

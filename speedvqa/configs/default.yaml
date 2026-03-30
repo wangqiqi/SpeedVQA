@@ -46,6 +46,9 @@ data:
   dataset_path_train: null
   dataset_path_val: null
   cache_dir: './cache'
+  # 快速试验：限制样本数；subsample_seed 非 null 时先按种子打乱再取前 max_samples
+  max_samples: null
+  subsample_seed: null
   
   # 图像预处理配置
   image:
