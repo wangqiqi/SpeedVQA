@@ -16,6 +16,18 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2104`
+
+### 变更
+
+- **计划 Phase 0**：**`plan.md`** 更新 — P0-1～P0-3 标为完成（冒烟），新增「基线表（Phase 0 冒烟）」与已知 ONNX 导出问题说明；**Phase A** 标为下一阶段。
+- **文档**：**`docs/02_使用.md`** 新增「**Phase 0 基线与实验协议**」（锁定 seed / fusion / 训练与导出命令、**加权 F1** 与 **best 权重按 val_loss** 的实现说明、冒烟流程、ONNX 与延迟登记约定）。
+- **配置**：**`speedvqa/configs/phase0_smoke.yaml`** — 继承 `default` 的短训冒烟配置（独立 **`train.save_dir`**）。
+- **示例**：**`speedvqa/examples/phase0_smoke_dataset.py`** — 生成 **`datasets/phase0_smoke`** 最小 PNG + **`vqa_labels.jsonl`**。
+- **默认配置**：**`default.yaml`** 中 **`optimizer.eps`**、**`scheduler.warmup_lr`** / **`min_lr`** 改为 **`1.0e-8` / `1.0e-6`**，避免 PyYAML 将 **`1e-8`** 解析为字符串导致 **AdamW** 初始化失败。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2049`
 
 ### 新增

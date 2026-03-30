@@ -97,14 +97,14 @@ train:
     lr: 0.001
     weight_decay: 0.0005
     betas: [0.9, 0.999]
-    eps: 1e-8
+    eps: 1.0e-8
   
   # 学习率调度器配置
   scheduler:
     type: 'cosine'  # cosine, step, plateau
     warmup_epochs: 5
-    warmup_lr: 1e-6
-    min_lr: 1e-6
+    warmup_lr: 1.0e-6
+    min_lr: 1.0e-6
   
   # 训练策略配置
   strategy:

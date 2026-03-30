@@ -18,7 +18,12 @@
 
 ## 当前进行
 
-（执行某阶段时，将对应阶段标题与负责人、状态写在此处；完成后移至「已完成」并更新 `CHANGELOG.md`。）
+### Phase A — 轻量跨模态融合（下一阶段）
+
+| 字段 | 内容 |
+|------|------|
+| **依赖** | Phase 0 文档与冒烟链路已就绪；**ONNX 一键导出**与当前 `SpeedVQAModel.forward(batch)` 签名仍待联调（见基线表） |
+| **状态** | `待开始`（实现 A-1～A-3 前建议先修导出路径或定「Phase A 仅 PyTorch 验收」的临时口径） |
 
 ---
 
@@ -66,9 +71,9 @@
 
 | 任务 ID | 内容 | 交付物 | 状态 |
 |---------|------|--------|------|
-| P0-1 | 固定评估命令与数据集划分版本（含 seed） | `docs/02_使用.md` 或本表「基线表」中可复制的命令行 | 待开始 |
-| P0-2 | 跑通一次完整 eval / 短训，记录基线指标与 `runs/` 目录名 | 基线表一行 + 日志路径 | 待开始 |
-| P0-3 | 记录当前 ONNX 导出命令与单样本数值对齐方式 | 片段写入 `plan.md` 基线表或 `archive/` 备忘 | 待开始 |
+| P0-1 | 固定评估命令与数据集划分版本（含 seed） | `docs/02_使用.md`「**Phase 0 基线与实验协议**」 | **已完成** |
+| P0-2 | 跑通一次完整 eval / 短训，记录基线指标与 `runs/` 目录名 | 见下「基线表（Phase 0 冒烟）」+ `runs/train/phase0_baseline_smoke/training.log` | **已完成**（冒烟集） |
+| P0-3 | 记录当前 ONNX 导出命令与单样本数值对齐方式 | 同节导出命令；**校验**：`ModelExporter` / `export.validation`；**现状**：一键导出 ONNX 失败，见基线表 | **已完成**（命令与现状说明） |
 
 **建议排期**：迭代第 1 周第 1～2 个工作日。  
 **依赖**：可用验证集与推理测试环境（CPU 可仅测导出；延迟在目标 GPU 上测）。
@@ -145,18 +150,32 @@
 
 #### 基线表（由 Phase 0 填写）
 
+**业务真实数据**行仍需在自有数据集上跑一次并替换下表「冒烟」行。
+
+##### 基线表（Phase 0 冒烟 — 2026-03-30）
+
 | 项 | 值 |
 |----|-----|
-| 日期 |  |
-| Git commit |  |
-| `fusion.method` |  |
-| 验证集 Acc / F1 |  |
-| 推理 p50 / p95（硬件） |  |
-| `runs/` 实验名 |  |
-| ONNX 对齐备注 |  |
+| 日期 | 2026-03-30 |
+| Git commit | 与 tag **`1.0330.2104`** 指向的提交一致（`git show 1.0330.2104`） |
+| 配置 | `speedvqa/configs/phase0_smoke.yaml`（`defaults: [default]` + 短训 overrides） |
+| `fusion.method` | `concat` |
+| `data.split.random_seed` | `42`（同 `default.yaml`） |
+| 数据 | `python -m speedvqa.examples.phase0_smoke_dataset --out ./datasets/phase0_smoke`（24 条合成样本，**仅验证链路**） |
+| 验证集 Acc / F1（末 epoch） | Acc **1.0** / weighted F1 **1.0**（val **4** 条，极低方差，不可替代真实基线） |
+| 推理 p50 / p95（硬件） | **未登记**；请在目标 GPU 上用 `ROIInferencer`、batch=1 补测并更新本表 |
+| `runs/` 实验目录 | `runs/train/phase0_baseline_smoke/`（`best_checkpoint.pth`、`training.log`） |
+| ONNX 对齐备注 | 已执行：`python -m speedvqa.cli.onekey_export --checkpoint runs/train/phase0_baseline_smoke/best_checkpoint.pth --formats pytorch,onnx`。**ONNX**：`torch.onnx.export` 报错 `SpeedVQAModel.forward() missing ... 'batch'`；**PyTorch 复检**：存在 CPU/GPU 输入与权重类型不一致提示。**后续**：导出器与模型 `forward` 契约联调后再填「logits 误差阈值内」结论。 |
 
 ---
 
 ## 已完成（近期）
+
+### Phase 0 — 基线与实验纪律（冒烟，2026-03-30）
+
+- **`docs/02_使用.md`**：新增「**Phase 0 基线与实验协议**」（锁定配置键、真实数据与冒烟命令、ONNX 说明、p50/p95 约定）。
+- **`speedvqa/configs/phase0_smoke.yaml`**、**`speedvqa/examples/phase0_smoke_dataset.py`**：可复现短训与最小数据集。
+- **`default.yaml`**：`optimizer.eps`、`scheduler.warmup_lr` / `min_lr` 改为 **`1.0e-8` / `1.0e-6`**，避免 PyYAML 将 `1e-8` 解析为字符串导致 `AdamW` 报错。
+- **基线表**：见上文；CHANGELOG 同期条目请对照 Git tag 规范更新。
 
 （阶段完成后将摘要移入此处，并引用 `CHANGELOG.md` 对应条目。）

@@ -1,0 +1,22 @@
+# Phase 0 冒烟 / 基线登记用：继承 default，缩短轮次、关闭早停，数据路径指向 phase0_smoke。
+# 使用：先 `python -m speedvqa.examples.phase0_smoke_dataset`，再 onekey_train 见 docs/02_使用.md。
+
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/phase0_smoke
+  dataloader:
+    batch_size: 8
+    num_workers: 0
+
+train:
+  save_dir: ./runs/train/phase0_baseline_smoke
+  epochs: 3
+  experiment_name: phase0_baseline_smoke
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false
