@@ -16,6 +16,19 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2120`
+
+### 新增
+
+- **配置**：**`speedvqa/configs/phase0_smoke_film.yaml`** — 与 **`phase0_smoke`** 相同短训设置，**`model.fusion.method: film`**，用于 Phase A 冒烟消融。
+
+### 变更
+
+- **导出**：**`_validate_pytorch_export`** 使用 **`original_model`** 参数所在设备构造输入，并将 **`loaded_model`** 对齐到该设备，修复 **CPU 权重 + CUDA 输入** 导致的校验失败。
+- **文档 / 计划**：**`docs/02_使用.md`** 补充 **`phase0_smoke_film`** 命令；**`plan.md`** 更新 **A-5/A-6** 状态，新增 **Phase A 冒烟消融表** 与 **ONNX** 冒烟验收说明。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2110`
 
 ### 新增

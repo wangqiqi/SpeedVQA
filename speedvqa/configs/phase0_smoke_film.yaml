@@ -1,0 +1,27 @@
+# Phase A-5 冒烟消融：与 phase0_smoke 相同，仅 fusion 改为 film。
+# 命令：同 phase0_smoke，数据仍用 phase0_smoke_dataset。
+
+defaults:
+  - default
+
+model:
+  fusion:
+    method: film
+    hidden_dim: 1792
+
+data:
+  dataset_path: ./datasets/phase0_smoke
+  dataloader:
+    batch_size: 8
+    num_workers: 0
+
+train:
+  save_dir: ./runs/train/phase0_baseline_smoke_film
+  epochs: 3
+  experiment_name: phase0_baseline_smoke_film
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false

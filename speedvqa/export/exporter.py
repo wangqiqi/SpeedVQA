@@ -595,13 +595,15 @@ class ModelExporter:
             image_size = self.config.get('data', {}).get('image', {}).get('size', [224, 224])
             max_length = self.config.get('model', {}).get('text', {}).get('max_length', 128)
             
+            dev = next(original_model.parameters()).device
             test_inputs = {
-                'image': torch.randn(batch_size, 3, image_size[0], image_size[1]).to(self.device),
-                'input_ids': torch.randint(0, 30522, (batch_size, max_length)).to(self.device),
-                'attention_mask': torch.ones(batch_size, max_length).to(self.device)
+                'image': torch.randn(batch_size, 3, image_size[0], image_size[1]).to(dev),
+                'input_ids': torch.randint(0, 30522, (batch_size, max_length)).to(dev),
+                'attention_mask': torch.ones(batch_size, max_length).to(dev),
             }
-            
-            # 比较输出
+
+            # 比较输出（与 original 同设备，避免 CPU 权重 + CUDA 输入）
+            loaded_model.to(dev)
             with torch.no_grad():
                 original_output = original_model(test_inputs)
                 loaded_output = loaded_model(test_inputs)

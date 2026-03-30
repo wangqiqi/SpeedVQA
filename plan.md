@@ -18,13 +18,13 @@
 
 ## 当前进行
 
-### Phase A — 轻量跨模态融合（进行中）
+### Phase A — 轻量跨模态融合（收尾中）
 
 | 字段 | 内容 |
 |------|------|
-| **进展** | **`film`** / **`cross_attn`** 已接入 **`MultiModalFusion`**；**`SUPPORTED_FUSION_METHODS`**、**`default.yaml`** 注释、**`docs/01_设计.md`**、单元测试已更新；**ONNX** 使用 **`SpeedVQAOnnxWrapper`** + CPU 追踪修复 `forward(batch)` 与导出器不兼容问题。 |
-| **待办** | **A-5** 业务/冒烟集上 **`film` vs `concat` 消融**并填基线表；**A-6** 在真实训练检查点上复测 **`onekey_export`** ONNX 与 ORT 数值对齐（DistilBERT 全量导出可能较慢）。 |
-| **状态** | `进行中` |
+| **进展** | 冒烟集上 **A-5** **`concat` vs `film`** 已跑并记入下表；**A-6** 在 **`phase0_baseline_smoke`** 检查点上 **`onekey_export` → ONNX** 成功，**ORT 校验 `numerical_accuracy` 通过**（见基线表）。**`_validate_pytorch_export`** 已与模型参数设备对齐。 |
+| **待办** | 在**业务真实数据集**上重复 A-5/A-6；**`film` 检查点**上补跑一次 ONNX（与 concat 等价路径）；**p50/p95** 仍待登记。 |
+| **状态** | `进行中`（冒烟范围已闭合） |
 
 ---
 
@@ -74,7 +74,7 @@
 |---------|------|--------|------|
 | P0-1 | 固定评估命令与数据集划分版本（含 seed） | `docs/02_使用.md`「**Phase 0 基线与实验协议**」 | **已完成** |
 | P0-2 | 跑通一次完整 eval / 短训，记录基线指标与 `runs/` 目录名 | 见下「基线表（Phase 0 冒烟）」+ `runs/train/phase0_baseline_smoke/training.log` | **已完成**（冒烟集） |
-| P0-3 | 记录当前 ONNX 导出命令与单样本数值对齐方式 | 同节导出命令；**校验**：`ModelExporter` / `export.validation`；**现状**：一键导出 ONNX 失败，见基线表 | **已完成**（命令与现状说明） |
+| P0-3 | 记录当前 ONNX 导出命令与单样本数值对齐方式 | **`docs/02_使用.md`** + 基线表；**ONNX** 已在冒烟 ckpt 上跑通（见「Phase A 冒烟消融」） | **已完成** |
 
 **建议排期**：迭代第 1 周第 1～2 个工作日。  
 **依赖**：可用验证集与推理测试环境（CPU 可仅测导出；延迟在目标 GPU 上测）。
@@ -98,8 +98,8 @@
 | A-2 | 实现新融合模块并接入 `SpeedVQAModel` | `speedvqa/models/speedvqa.py`（含 **`SpeedVQAOnnxWrapper`**） | **已完成** |
 | A-3 | `factory` / 配置校验与 `SUPPORTED_*` | `speedvqa/models/factory.py` | **已完成** |
 | A-4 | 单元测试：前向形状、与 concat 切换、配置非法报错 | `speedvqa/tests/test_speedvqa_model.py` | **已完成** |
-| A-5 | 训练消融：新融合 vs concat，填基线对比表 | `runs/` + 本计划基线表 | **待开始** |
-| A-6 | ONNX 导出与数值对齐验证 | `speedvqa/export/exporter.py` | **部分完成**（实现已修；待真实 ckpt 上验收） |
+| A-5 | 训练消融：新融合 vs concat，填基线对比表 | `runs/` + 下表「Phase A 冒烟消融」 | **已完成**（冒烟集；真实数据待补） |
+| A-6 | ONNX 导出与数值对齐验证 | `speedvqa/export/exporter.py`、`onekey_export` | **已完成**（冒烟 **`concat`** ckpt；**`film`** ckpt 待同法复测） |
 | A-7 | 更新 `docs/01_设计.md` 融合小节 | `docs/01_设计.md` | **已完成** |
 
 **验收**：满足上文「阶段验收默认门槛」；默认 **不** 将新方法改为全局默认，直至消融达标后由评审改 `default.yaml`。
@@ -158,7 +158,7 @@
 | 项 | 值 |
 |----|-----|
 | 日期 | 2026-03-30 |
-| Git commit | 与 tag **`1.0330.2104`** 指向的提交一致（`git show 1.0330.2104`） |
+| Git commit | 与 tag **`1.0330.2120`** 指向的提交一致（`git show 1.0330.2120`） |
 | 配置 | `speedvqa/configs/phase0_smoke.yaml`（`defaults: [default]` + 短训 overrides） |
 | `fusion.method` | `concat` |
 | `data.split.random_seed` | `42`（同 `default.yaml`） |
@@ -166,7 +166,18 @@
 | 验证集 Acc / F1（末 epoch） | Acc **1.0** / weighted F1 **1.0**（val **4** 条，极低方差，不可替代真实基线） |
 | 推理 p50 / p95（硬件） | **未登记**；请在目标 GPU 上用 `ROIInferencer`、batch=1 补测并更新本表 |
 | `runs/` 实验目录 | `runs/train/phase0_baseline_smoke/`（`best_checkpoint.pth`、`training.log`） |
-| ONNX 对齐备注 | **实现更新（2026-03-30）**：导出使用 **`SpeedVQAOnnxWrapper`**（三 tensor 入参）+ CPU **`torch.onnx.export`**；**`_validate_onnx_export`** 将 batch 张量对齐到模型设备。**待复测**：在本地检查点上执行 `onekey_export`，确认 ORT 与 PyTorch 的 logits 在 **`export.validation.tolerance`** 内。 |
+| ONNX 对齐备注 | **`concat`** 冒烟 ckpt：**`onekey_export`** 生成 **`runs/exports/phase0_onnx_verify.onnx`**，校验 **`Validation: ✓ … accuracy=1.0`**（相对 PyTorch logits 在默认 tolerance 内）。**`film`** 结构同路径，建议在 **`phase0_baseline_smoke_film/best_checkpoint.pth`** 上再导一次归档。 |
+
+##### Phase A 冒烟消融（`concat` vs `film`，2026-03-30）
+
+数据：**`datasets/phase0_smoke`**（24 条），**`data.split.random_seed=42`**，**3 epoch**，配置 **`phase0_smoke.yaml`** / **`phase0_smoke_film.yaml`**。验证集仅 **4** 条，指标**无推断意义**，仅用于流程与相对对照。
+
+| 融合 | 配置 | `runs/` | 末 epoch Val（Loss / Acc / wF1） |
+|------|------|---------|----------------------------------|
+| **concat** | `phase0_smoke.yaml` | `phase0_baseline_smoke/` | 0.6803 / 0.50 / 0.333 |
+| **film** | `phase0_smoke_film.yaml` | `phase0_baseline_smoke_film/` | 0.7132 / 0.50 / 0.333 |
+
+**说明**：本冒烟上 **`film` 末轮 val_loss 略高于 `concat`**，不具统计显著性；**默认生产仍保持 `concat`**，待真实数据评审后再切换。
 
 ---
 
@@ -184,5 +195,6 @@
 - **`MultiModalFusion`**：新增 **`film`**、 **`cross_attn`**；默认仍为 **`concat`**。
 - **`ModelExporter.export_onnx`**：**`SpeedVQAOnnxWrapper`**、CPU 导出、ORT 校验时设备对齐。
 - **文档/测试**：**`docs/01_设计.md`**、**`test_speedvqa_model.py`** 覆盖新融合。
+- **A-5/A-6（冒烟）**：**`phase0_smoke_film.yaml`**；**`concat`** ckpt **ONNX** 导出与 ORT 数值校验通过；**`_validate_pytorch_export`** 设备对齐修复。
 
 （阶段完成后将摘要移入此处，并引用 `CHANGELOG.md` 对应条目。）
