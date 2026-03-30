@@ -42,6 +42,9 @@ model:
 data:
   # 数据路径配置
   dataset_path: './datasets/vqa_dataset'
+  # 两者均非空时 onekey_train 分别加载训练/验证目录（如 train2017 与 val2017），忽略 data.split 随机划分
+  dataset_path_train: null
+  dataset_path_val: null
   cache_dir: './cache'
   
   # 图像预处理配置

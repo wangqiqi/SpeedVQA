@@ -1,0 +1,25 @@
+# Balanced Binary Abstract：train2017 / val2017 目录互斥（官方划分），concat，多 epoch 基线
+
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/vqa_abstract_binary_2017/train2017
+  dataset_path_train: ./datasets/vqa_abstract_binary_2017/train2017
+  dataset_path_val: ./datasets/vqa_abstract_binary_2017/val2017
+  vqa_official:
+    enabled: auto
+  dataloader:
+    batch_size: 16
+    num_workers: 2
+
+train:
+  epochs: 5
+  save_dir: ./runs/train/abstract_official_split_concat
+  experiment_name: abstract_official_split_concat
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false

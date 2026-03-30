@@ -16,6 +16,19 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2149`
+
+### 新增
+
+- **配置**：**`speedvqa/configs/abstract_binary_official_split_concat.yaml`**、**`abstract_binary_official_split_film.yaml`** — Abstract Binary 官方 **train2017 / val2017** 互斥目录，**concat** / **film** 短训基线（`defaults: [default]`）。
+
+### 变更
+
+- **`speedvqa/cli/onekey_train.py`**：当 **`data.dataset_path_train`** 与 **`data.dataset_path_val`** 均非空时分别构建训练/验证集，否则仍用 **`dataset_path`** + **`data.split`** 随机划分。
+- **`speedvqa/configs/default.yaml`**：增加 **`dataset_path_train`** / **`dataset_path_val`**（默认 **`null`**）及说明注释。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2145`
 
 ### 新增
