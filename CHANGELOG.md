@@ -16,6 +16,20 @@ Git **tag** 采用 **`N.MMDD.ABCD`** 三段点分数字形态（非 SemVer）：
 
 ---
 
+## [2026-03-30] — tag `1.0330.2145`
+
+### 新增
+
+- **示例**：**`speedvqa/examples/bench_roi_inferencer_latency.py`** — ROIInferencer **batch=1** 延迟 **p50/p95**。
+- **配置**：**`abstract_binary_val2017_film.yaml`**、**`abstract_binary_val2017_A5_short.yaml`**、**`abstract_binary_val2017_film_A5_short.yaml`**（真实数据短训；**`defaults` 不递归**，衍生 YAML 自含 **`defaults: [default]`**）。
+
+### 变更
+
+- **`plan.md`**：已完成 Phase 0/A 冒烟迁至 **`archive/20260330_233000_plan_Phase0与PhaseA冒烟完成归档.md`**；补充 **val2017 1 epoch** 消融、**film 冒烟 ONNX**、**p50/p95** 表。
+- **`abstract_binary_val2017.yaml`**：注释说明配置继承限制。
+
+---
+
 ## [2026-03-30] — tag `1.0330.2220`
 
 ### 新增

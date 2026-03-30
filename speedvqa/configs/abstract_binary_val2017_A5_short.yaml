@@ -1,0 +1,22 @@
+# Phase A-5 真实数据短训：val2017 + concat，1 epoch 快速填表（可改 epochs）
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/vqa_abstract_binary_2017/val2017
+  vqa_official:
+    enabled: auto
+  dataloader:
+    batch_size: 16
+    num_workers: 2
+
+train:
+  epochs: 1
+  save_dir: ./runs/train/abstract_binary_val2017_concat_A5
+  experiment_name: abstract_binary_val2017_concat_A5
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false

@@ -1,5 +1,6 @@
 # Balanced Binary Abstract（val2017）— 官方 JSON 在 dataset 根目录时 vqa_official:auto 即可加载。
 # 数据：./datasets/vqa_abstract_binary_2017/val2017（questions + annotations + images/）
+# 注意：load_config 不递归解析「父 YAML」的 defaults；衍生配置须自带 defaults: [default]（参见 abstract_binary_val2017_film.yaml）。
 
 defaults:
   - default

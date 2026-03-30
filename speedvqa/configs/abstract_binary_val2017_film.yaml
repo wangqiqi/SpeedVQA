@@ -1,0 +1,29 @@
+# Balanced Binary Abstract val2017 + FiLM（与 abstract_binary_val2017 同数据）
+# 注意：当前 load_config 不递归解析父 YAML 的 defaults，故本文件自包含 defaults: [default]。
+
+defaults:
+  - default
+
+data:
+  dataset_path: ./datasets/vqa_abstract_binary_2017/val2017
+  vqa_official:
+    enabled: auto
+  dataloader:
+    batch_size: 16
+    num_workers: 2
+
+model:
+  fusion:
+    method: film
+    hidden_dim: 1792
+
+train:
+  save_dir: ./runs/train/abstract_binary_val2017_film
+  epochs: 3
+  experiment_name: abstract_binary_val2017_film_smoke
+  strategy:
+    mixed_precision: false
+    early_stopping:
+      enabled: false
+  logging:
+    tensorboard: false
